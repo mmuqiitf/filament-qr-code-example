@@ -1,0 +1,216 @@
+<?php
+
+namespace App\Filament\Pages;
+
+use App\Models\Order;
+use App\Models\OrderItem;
+use App\Models\Product;
+use BackedEnum;
+use Filament\Notifications\Notification;
+use Filament\Pages\Page;
+use Filament\Support\Icons\Heroicon;
+use Illuminate\Support\Str;
+use Livewire\Attributes\On;
+
+class CashierCheckout extends Page
+{
+    protected string $view = 'filament.pages.cashier-checkout';
+
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedShoppingCart;
+
+    protected static \UnitEnum|string|null $navigationGroup = 'Workflows & Operations';
+
+    protected static ?int $navigationSort = 2;
+
+    protected static ?string $title = 'Cashier POS Checkout';
+
+    protected static ?string $navigationLabel = 'Cashier Checkout';
+
+    public string $cashierBadge = 'CASHIER-01';
+
+    public string $customerCode = '';
+
+    public string $scanInput = '';
+
+    public string $paymentMethod = 'cash';
+
+    /**
+     * @var array<int, array{
+     *     product_id: int|null,
+     *     sku: string,
+     *     name: string,
+     *     price: float,
+     *     quantity: int,
+     *     subtotal: float
+     * }>
+     */
+    public array $cart = [];
+
+    public float $taxRate = 0.08;
+
+    public function mount(): void
+    {
+        $this->cart = [];
+        $this->cashierBadge = 'CSH-'.strtoupper(Str::random(4));
+    }
+
+    #[On('qr-collector-item-added')]
+    public function onCollectorItemAdded(string $code): void
+    {
+        $this->scanProduct($code);
+    }
+
+    public function handleManualScan(): void
+    {
+        if (filled($this->scanInput)) {
+            $this->scanProduct($this->scanInput);
+            $this->scanInput = '';
+        }
+    }
+
+    public function scanProduct(string $code): void
+    {
+        $cleaned = trim($code);
+        if (empty($cleaned)) {
+            return;
+        }
+
+        $product = Product::query()
+            ->where('sku', $cleaned)
+            ->orWhere('barcode', $cleaned)
+            ->first();
+
+        if (! $product) {
+            Notification::make()
+                ->title('Product Not Found')
+                ->body("No catalog item matches barcode/SKU [{$cleaned}].")
+                ->danger()
+                ->send();
+
+            return;
+        }
+
+        // Check if already in cart
+        $found = false;
+        foreach ($this->cart as $index => $item) {
+            if ($item['sku'] === $product->sku) {
+                $this->cart[$index]['quantity']++;
+                $this->cart[$index]['subtotal'] = round($this->cart[$index]['quantity'] * $this->cart[$index]['price'], 2);
+                $found = true;
+                break;
+            }
+        }
+
+        if (! $found) {
+            $this->cart[] = [
+                'product_id' => $product->id,
+                'sku' => $product->sku,
+                'name' => $product->name,
+                'price' => (float) $product->price,
+                'quantity' => 1,
+                'subtotal' => (float) $product->price,
+            ];
+        }
+
+        Notification::make()
+            ->title("Added {$product->name}")
+            ->body("SKU: {$product->sku} | Price: \${$product->price}")
+            ->success()
+            ->duration(2000)
+            ->send();
+    }
+
+    public function incrementQuantity(int $index): void
+    {
+        if (isset($this->cart[$index])) {
+            $this->cart[$index]['quantity']++;
+            $this->cart[$index]['subtotal'] = round($this->cart[$index]['quantity'] * $this->cart[$index]['price'], 2);
+        }
+    }
+
+    public function decrementQuantity(int $index): void
+    {
+        if (isset($this->cart[$index])) {
+            if ($this->cart[$index]['quantity'] > 1) {
+                $this->cart[$index]['quantity']--;
+                $this->cart[$index]['subtotal'] = round($this->cart[$index]['quantity'] * $this->cart[$index]['price'], 2);
+            } else {
+                $this->removeItem($index);
+            }
+        }
+    }
+
+    public function removeItem(int $index): void
+    {
+        if (isset($this->cart[$index])) {
+            unset($this->cart[$index]);
+            $this->cart = array_values($this->cart);
+        }
+    }
+
+    public function clearCart(): void
+    {
+        $this->cart = [];
+    }
+
+    public function getSubtotalProperty(): float
+    {
+        return (float) array_sum(array_column($this->cart, 'subtotal'));
+    }
+
+    public function getTaxAmountProperty(): float
+    {
+        return round($this->getSubtotalProperty() * $this->taxRate, 2);
+    }
+
+    public function getTotalProperty(): float
+    {
+        return round($this->getSubtotalProperty() + $this->getTaxAmountProperty(), 2);
+    }
+
+    public function completeCheckout(): void
+    {
+        if (empty($this->cart)) {
+            Notification::make()
+                ->title('Cart is empty')
+                ->body('Scan at least one product before proceeding with checkout.')
+                ->warning()
+                ->send();
+
+            return;
+        }
+
+        $orderNumber = 'ORD-'.now()->format('Ymd').'-'.strtoupper(Str::random(4));
+
+        $order = Order::create([
+            'order_number' => $orderNumber,
+            'cashier_badge' => $this->cashierBadge,
+            'customer_code' => $this->customerCode ?: null,
+            'total_amount' => $this->getTotalProperty(),
+            'payment_method' => $this->paymentMethod,
+            'status' => 'completed',
+        ]);
+
+        foreach ($this->cart as $item) {
+            OrderItem::create([
+                'order_id' => $order->id,
+                'product_id' => $item['product_id'],
+                'sku' => $item['sku'],
+                'name' => $item['name'],
+                'price' => $item['price'],
+                'quantity' => $item['quantity'],
+                'subtotal' => $item['subtotal'],
+            ]);
+        }
+
+        Notification::make()
+            ->title('Order Completed Successfully!')
+            ->body("Order #{$orderNumber} registered with total \${$this->getTotalProperty()}.")
+            ->success()
+            ->send();
+
+        // Reset for next customer
+        $this->cart = [];
+        $this->customerCode = '';
+    }
+}
