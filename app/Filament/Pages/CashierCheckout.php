@@ -8,9 +8,11 @@ use App\Models\Product;
 use BackedEnum;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
+use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Support\Str;
-use Livewire\Attributes\On;
+use Mmuqiitf\FilamentQrCode\Forms\Components\QrCollector;
+use Mmuqiitf\FilamentQrCode\Forms\Components\QrWedgeListener;
 
 class CashierCheckout extends Page
 {
@@ -48,16 +50,38 @@ class CashierCheckout extends Page
 
     public float $taxRate = 0.08;
 
+    /**
+     * @var array<string, mixed>|null
+     */
+    public ?array $data = [];
+
     public function mount(): void
     {
         $this->cart = [];
         $this->cashierBadge = 'CSH-'.strtoupper(Str::random(4));
+        $this->form->fill([
+            'collector_codes' => [],
+        ]);
     }
 
-    #[On('qr-collector-item-added')]
-    public function onCollectorItemAdded(string $code): void
+    public function form(Schema $schema): Schema
     {
-        $this->scanProduct($code);
+        return $schema
+            ->statePath('data')
+            ->components([
+                QrWedgeListener::make([
+                    'scanInput',
+                ])
+                    ->autoFocusNext(false)
+                    ->sound(true),
+
+                QrCollector::make('collector_codes')
+                    ->allowDuplicates(false)
+                    ->delayBetweenScans(1200)
+                    ->sound(true)
+                    ->vibrate(true)
+                    ->hardwareScanner(enabled: true, burstThresholdMs: 50),
+            ]);
     }
 
     public function handleManualScan(): void

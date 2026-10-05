@@ -14,7 +14,10 @@ beforeEach(function () {
 it('can render cashier pos checkout page', function () {
     Livewire::test(CashierCheckout::class)
         ->assertSuccessful()
-        ->assertSee('Cashier POS Checkout');
+        ->assertSee('Cashier POS Checkout')
+        ->assertSee('Batch QR Collector')
+        ->assertSee('qr-collector-item-added')
+        ->assertSee('qr-wedge-scanned');
 });
 
 it('can scan a product barcode and update cart calculation', function () {
