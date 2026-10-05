@@ -33,7 +33,10 @@ class ProductForm
                     ->scanFormat(fn (?string $rawValue): ?string => $rawValue ? strtoupper(trim($rawValue)) : null)
                     ->sound(true)
                     ->vibrate(true)
-                    ->hardwareScanner(enabled: true, burstThresholdMs: 50)
+                    ->beepFrequency(660)
+                    ->beepDuration(120)
+                    ->vibrateDuration(200)
+                    ->hardwareScanner(enabled: true, burstThresholdMs: 50, terminators: ['Enter', 'Tab'], minBarcodeLength: 2)
                     ->allowUpload(true)
                     ->placeholder('Scan QR/barcode with camera, wedge, or enter SKU...'),
 

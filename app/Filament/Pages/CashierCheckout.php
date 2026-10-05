@@ -11,7 +11,6 @@ use Filament\Pages\Page;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Support\Str;
-use Mmuqiitf\FilamentQrCode\Forms\Components\QrCollector;
 use Mmuqiitf\FilamentQrCode\Forms\Components\QrWedgeListener;
 
 class CashierCheckout extends Page
@@ -59,11 +58,14 @@ class CashierCheckout extends Page
     {
         $this->cart = [];
         $this->cashierBadge = 'CSH-'.strtoupper(Str::random(4));
-        $this->form->fill([
-            'collector_codes' => [],
-        ]);
+        $this->form->fill();
     }
 
+    /**
+     * Cashiers scan with a handheld gun, so there is no camera UI here —
+     * just the invisible wedge interceptor catching bursts anywhere on
+     * the page and routing them into the SKU box.
+     */
     public function form(Schema $schema): Schema
     {
         return $schema
@@ -73,14 +75,8 @@ class CashierCheckout extends Page
                     'scanInput',
                 ])
                     ->autoFocusNext(false)
-                    ->sound(true),
-
-                QrCollector::make('collector_codes')
-                    ->allowDuplicates(false)
-                    ->delayBetweenScans(1200)
                     ->sound(true)
-                    ->vibrate(true)
-                    ->hardwareScanner(enabled: true, burstThresholdMs: 50),
+                    ->hardwareScanner(terminators: ['Enter', 'Tab'], minBarcodeLength: 2),
             ]);
     }
 

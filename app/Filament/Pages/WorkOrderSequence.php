@@ -8,15 +8,15 @@ use Filament\Actions\Action;
 use Filament\Forms\Components\Textarea;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
-use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Mmuqiitf\FilamentQrCode\Enums\BarcodeFormat;
-use Mmuqiitf\FilamentQrCode\Forms\Components\QrScanner;
-use Mmuqiitf\FilamentQrCode\Forms\Components\QrWedgeListener;
+use Mmuqiitf\FilamentQrCode\Forms\Components\QrScanSequence;
 
 /**
+ * Sequential scanning: ONE shared camera feed drives MULTIPLE fields.
+ *
  * @property Schema $form
  */
 class WorkOrderSequence extends Page
@@ -38,7 +38,7 @@ class WorkOrderSequence extends Page
      */
     public ?array $data = [];
 
-    public string $activeMode = 'chained';
+    public bool $allowCorrections = true;
 
     public function mount(): void
     {
@@ -47,54 +47,53 @@ class WorkOrderSequence extends Page
         ]);
     }
 
+    public function handleSequenceStep(string $field, string $value): void
+    {
+        Notification::make()
+            ->title('Sequence step captured')
+            ->body("{$field}: {$value}")
+            ->success()
+            ->duration(2000)
+            ->send();
+    }
+
+    public function handleSequenceEdited(string $field, string $value): void
+    {
+        Notification::make()
+            ->title('Sequence step corrected')
+            ->body("{$field}: {$value}")
+            ->success()
+            ->duration(2000)
+            ->send();
+    }
+
     public function form(Schema $schema): Schema
     {
         return $schema
             ->statePath('data')
             ->components([
-                QrWedgeListener::make([
-                    'batch_number',
-                    'operator_badge',
-                    'equipment_code',
-                ])
-                    ->autoFocusNext(true)
-                    ->sound(true),
-
-                Section::make('Chained Sequential Fields')
-                    ->description('Each scan automatically validates, plays sensory feedback, and shifts focus directly to the next field in sequence.')
+                Section::make('Work Order Sequence')
+                    ->description('One shared camera feed walks through every field below. Hardware bursts feed the active step directly.')
                     ->schema([
-                        Grid::make(3)
-                            ->schema([
-                                QrScanner::make('batch_number')
-                                    ->label('1. Batch / Job Ticket')
-                                    ->placeholder('Scan batch barcode...')
-                                    ->nextField('operator_badge')
-                                    ->formats([BarcodeFormat::QrCode, BarcodeFormat::Code128])
-                                    ->sound(true)
-                                    ->vibrate(true)
-                                    ->hardwareScanner(enabled: true, burstThresholdMs: 50)
-                                    ->required(),
-
-                                QrScanner::make('operator_badge')
-                                    ->label('2. Operator ID Badge')
-                                    ->placeholder('Scan employee badge...')
-                                    ->nextField('equipment_code')
-                                    ->formats([BarcodeFormat::QrCode, BarcodeFormat::Code39])
-                                    ->sound(true)
-                                    ->vibrate(true)
-                                    ->hardwareScanner(enabled: true, burstThresholdMs: 50)
-                                    ->required(),
-
-                                QrScanner::make('equipment_code')
-                                    ->label('3. Machine / Equipment')
-                                    ->placeholder('Scan machine QR...')
-                                    ->nextField('notes')
-                                    ->formats([BarcodeFormat::QrCode, BarcodeFormat::Ean13])
-                                    ->sound(true)
-                                    ->vibrate(true)
-                                    ->hardwareScanner(enabled: true, burstThresholdMs: 50)
-                                    ->required(),
-                            ]),
+                        QrScanSequence::make([
+                            'batch_number' => '1. Batch / Job Ticket',
+                            'operator_badge' => '2. Operator ID Badge',
+                            'equipment_code' => '3. Machine / Equipment',
+                        ])
+                            ->fps(25)
+                            ->qrbox(250)
+                            ->formats([
+                                BarcodeFormat::QrCode,
+                                BarcodeFormat::Code128,
+                                BarcodeFormat::Code39,
+                                BarcodeFormat::Ean13,
+                            ])
+                            ->preferRearCamera()
+                            ->statePathPrefix('data')
+                            ->editable(fn (): bool => $this->allowCorrections)
+                            ->sound(true)
+                            ->vibrate(true)
+                            ->hardwareScanner(enabled: true, burstThresholdMs: 50),
 
                         Textarea::make('notes')
                             ->label('4. Operational Notes / Inspection Remarks')
@@ -106,7 +105,23 @@ class WorkOrderSequence extends Page
 
     public function submit(): void
     {
-        $state = $this->form->getState();
+        // Merge raw form data first: the sequence container writes scans
+        // straight into Livewire state via $wire.set, bypassing field
+        // components, so getState() alone would miss them.
+        $state = array_merge($this->data ?? [], $this->form->getState());
+
+        $missing = collect(['batch_number', 'operator_badge', 'equipment_code'])
+            ->filter(fn (string $key): bool => blank($state[$key] ?? null));
+
+        if ($missing->isNotEmpty()) {
+            Notification::make()
+                ->title('Incomplete sequence')
+                ->body('Scan the batch, operator, and equipment codes before submitting.')
+                ->warning()
+                ->send();
+
+            return;
+        }
 
         WorkOrder::create([
             'batch_number' => $state['batch_number'],
