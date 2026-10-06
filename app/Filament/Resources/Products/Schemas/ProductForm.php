@@ -46,7 +46,7 @@ class ProductForm
                     ->hardwareScanner(enabled: true, burstThresholdMs: 50, terminators: ['Enter', 'Tab'], minBarcodeLength: 2)
                     ->allowUpload(true)
                     ->fps(15)
-                    ->placeholder('Scan QR/barcode with camera, wedge, or enter SKU...'),
+                    ->placeholder('Scan QR/barcode with camera, handheld scanner, or enter SKU...'),
 
                 TextInput::make('barcode')
                     ->label('Alternative Barcode / EAN')

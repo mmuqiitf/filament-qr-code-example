@@ -166,3 +166,11 @@ This project has domain-specific skills available in `**/skills/**`. You MUST ac
 - After the feature tests pass, ask the user to run the complete suite with `php artisan test --compact`.
 
 </laravel-boost-guidelines>
+
+=== filament-qr-code package workflow ===
+
+# Filament QR Code package workflow
+
+- `mmuqiitf/filament-qr-code` is linked via a Composer path repository (`../filament-qr-code`, symlink), so package PHP changes take effect immediately.
+- Package JS/CSS does NOT: Filament serves the bundle from `public/css|js/mmuqiitf/filament-qr-code/`, not from the package `dist/`. After any package `npm run build`, run `php artisan filament:assets` here, otherwise you are smoke-testing stale code.
+- After package Blade changes, run `php artisan optimize:clear` (compiled views + Filament cache).

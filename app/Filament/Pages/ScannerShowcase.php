@@ -86,7 +86,7 @@ class ScannerShowcase extends Page
                     ]),
 
                 Section::make('4. No upload fallback')
-                    ->description('Camera or wedge only — the image-file option is hidden.')
+                    ->description('Camera or handheld scanner only — the image-file option is hidden.')
                     ->schema([
                         QrScanner::make('no_upload')
                             ->label('Strict capture')
@@ -94,7 +94,7 @@ class ScannerShowcase extends Page
                             ->placeholder('Camera or handheld scanner only...'),
                     ]),
 
-                Section::make('5. Custom feedback and wedge tuning')
+                Section::make('5. Custom feedback and burst tuning')
                     ->description('Low slow beep, long vibration, and bursts shorter than 4 chars treated as typing.')
                     ->schema([
                         QrScanner::make('custom_feedback')

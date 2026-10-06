@@ -15,7 +15,7 @@ it('can render cashier pos checkout page', function () {
     Livewire::test(CashierCheckout::class)
         ->assertSuccessful()
         ->assertSee('Cashier POS Checkout')
-        ->assertSee('qr-wedge-scanned')
+        ->assertSee('qr-hardware-scanned')
         ->assertDontSee('Batch QR Collector');
 });
 

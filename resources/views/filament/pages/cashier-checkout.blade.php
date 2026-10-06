@@ -1,8 +1,8 @@
 <x-filament-panels::page>
     <div
         class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start"
-        x-on:qr-wedge-scanned.window="$wire.scanProduct($event.detail.value)"
-        x-on:qr-wedge-scanned.window="$wire.set('scanInput', '')"
+        x-on:qr-hardware-scanned.window="$wire.scanProduct($event.detail.value)"
+        x-on:qr-hardware-scanned.window="$wire.set('scanInput', '')"
     >
         {{-- Left: Scanner Station & Cart Items (7 cols) --}}
         <div class="lg:col-span-7 space-y-6">
@@ -36,7 +36,7 @@
                 heading="{{ __('Hardware / Barcode Scanner Input') }}"
                 description="{{ __('Scan barcode or type SKU and press Enter') }}"
             >
-                {{-- Package smoke-test: invisible wedge interceptor, no camera UI --}}
+                {{-- Package smoke-test: invisible hardware scanner interceptor, no camera UI --}}
                 {{ $this->form }}
 
                 <div class="space-y-4">
