@@ -14,7 +14,7 @@ class CustomFormattedScanner extends QrScanner
     {
         $this->prefix = $prefix;
 
-        $this->scanFormat(function (?string $rawValue) use ($prefix): ?string {
+        $normalize = function (?string $rawValue) use ($prefix): ?string {
             if ($rawValue === null) {
                 return null;
             }
@@ -26,6 +26,16 @@ class CustomFormattedScanner extends QrScanner
             }
 
             return $trimmed;
+        };
+
+        $this->scanFormat($normalize);
+
+        $this->afterStateUpdated(function ($component, ?string $state) use ($normalize): void {
+            $normalized = $normalize($state);
+
+            if ($normalized !== $state) {
+                $component->state($normalized);
+            }
         });
 
         return $this;

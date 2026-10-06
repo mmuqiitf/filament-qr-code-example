@@ -31,6 +31,13 @@ class ProductForm
                         BarcodeFormat::Code39,
                     ])
                     ->scanFormat(fn (?string $rawValue): ?string => $rawValue ? strtoupper(trim($rawValue)) : null)
+                    ->afterStateUpdated(function ($component, ?string $state): void {
+                        $normalized = filled($state) ? strtoupper(trim($state)) : $state;
+
+                        if ($normalized !== $state) {
+                            $component->state($normalized);
+                        }
+                    })
                     ->sound(true)
                     ->vibrate(true)
                     ->beepFrequency(660)
@@ -38,6 +45,7 @@ class ProductForm
                     ->vibrateDuration(200)
                     ->hardwareScanner(enabled: true, burstThresholdMs: 50, terminators: ['Enter', 'Tab'], minBarcodeLength: 2)
                     ->allowUpload(true)
+                    ->fps(15)
                     ->placeholder('Scan QR/barcode with camera, wedge, or enter SKU...'),
 
                 TextInput::make('barcode')

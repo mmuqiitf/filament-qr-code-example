@@ -80,7 +80,8 @@ class WorkOrderSequence extends Page
                             'operator_badge' => '2. Operator ID Badge',
                             'equipment_code' => '3. Machine / Equipment',
                         ])
-                            ->fps(25)
+                            // Shared feed decodes continuously: 15 fps halves main-thread decode cost vs the default.
+                            ->fps(15)
                             ->qrbox(250)
                             ->formats([
                                 BarcodeFormat::QrCode,

@@ -2,6 +2,7 @@
     <div
         class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start"
         x-on:qr-wedge-scanned.window="$wire.scanProduct($event.detail.value)"
+        x-on:qr-wedge-scanned.window="$wire.set('scanInput', '')"
     >
         {{-- Left: Scanner Station & Cart Items (7 cols) --}}
         <div class="lg:col-span-7 space-y-6">
@@ -42,6 +43,8 @@
                     <div class="flex gap-2">
                         <x-filament::input.wrapper class="flex-1">
                             <x-filament::input
+                                id="scanInput"
+                                name="scanInput"
                                 type="text"
                                 wire:model="scanInput"
                                 wire:keydown.enter="handleManualScan"

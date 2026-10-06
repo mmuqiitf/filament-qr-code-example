@@ -50,6 +50,8 @@ class ScannerShowcase extends Page
                     ->schema([
                         QrScanner::make('basic_sku')
                             ->label('SKU')
+                            // Unrestricted symbologies decode every frame: 10 fps keeps low-end devices smooth.
+                            ->fps(10)
                             ->placeholder('Scan any code...'),
                     ]),
 
@@ -75,6 +77,11 @@ class ScannerShowcase extends Page
                                 BarcodeFormat::Code128,
                             ])
                             ->scanFormat(fn (?string $rawValue): ?string => $rawValue ? trim($rawValue) : null)
+                            ->afterStateUpdated(function ($component, ?string $state): void {
+                                if (filled($state) && trim($state) !== $state) {
+                                    $component->state(trim($state));
+                                }
+                            })
                             ->placeholder('Scan a retail barcode...'),
                     ]),
 
