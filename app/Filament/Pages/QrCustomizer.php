@@ -13,6 +13,7 @@ use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Mmuqiitf\FilamentQrCode\Enums\QrFormat;
 use Mmuqiitf\FilamentQrCode\Facades\FilamentQrCode;
+use Mmuqiitf\FilamentQrCode\Support\QrPayload;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
 /**
@@ -57,7 +58,7 @@ class QrCustomizer extends Page
             ->statePath('data')
             ->components([
                 Section::make('QR Code Configuration')
-                    ->description('Customize the visual appearance, encoding density, text overlays, and export format in real-time.')
+                    ->description('Customize the visual appearance, encoding density, text overlays, and export format in real-time. Use the payload presets above to build WiFi/vCard/mailto/SMS/geo strings without hand-escaping.')
                     ->schema([
                         TextInput::make('content')
                             ->label('Data / Content to Encode')
@@ -124,6 +125,31 @@ class QrCustomizer extends Page
                             ->columnSpanFull(),
                     ]),
             ]);
+    }
+
+    /**
+     * Fill the content box with a QrPayload builder so escaping-sensitive
+     * strings (WiFi/vCard/mailto/SMS/geo) never get hand-concatenated.
+     */
+    public function applyPayloadPreset(string $preset): void
+    {
+        $content = match ($preset) {
+            'wifi' => QrPayload::wifi('Shop Floor', 'secret-1'),
+            'vcard' => QrPayload::vcard([
+                'firstName' => 'Siti',
+                'lastName' => 'Ops',
+                'organization' => 'Warehouse 7',
+                'phone' => '+621234567',
+                'email' => 'ops@example.com',
+            ]),
+            'mailto' => QrPayload::mailto('ops@example.com', 'Stock alert', 'Bin 12 empty'),
+            'sms' => QrPayload::sms('+621234567', 'Arrived'),
+            'geo' => QrPayload::geo(-6.2, 106.8, 'Warehouse 7'),
+            default => 'https://filamentphp.com',
+        };
+
+        $this->data['content'] = $content;
+        $this->form->fill($this->data);
     }
 
     public function getPreviewDataUriProperty(): string

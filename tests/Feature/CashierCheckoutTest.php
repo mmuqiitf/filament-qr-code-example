@@ -5,7 +5,9 @@ use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\Product;
 use App\Models\User;
+use Illuminate\Support\Facades\Event;
 use Livewire\Livewire;
+use Mmuqiitf\FilamentQrCode\Events\QrCodeScanned;
 
 beforeEach(function () {
     $this->actingAs(User::factory()->create());
@@ -49,6 +51,23 @@ it('increments quantity when the same product is scanned multiple times', functi
         ->assertSet('cart.0.quantity', 2)
         ->assertSet('cart.0.subtotal', 40.00)
         ->assertSet('subtotal', 40.00);
+});
+
+it('sanitizes gun framing and audits server-observed scans', function () {
+    $product = Product::factory()->create([
+        'sku' => 'SKU-SCAN-01',
+        'price' => 50.00,
+    ]);
+
+    Event::fake([QrCodeScanned::class]);
+
+    Livewire::test(CashierCheckout::class)
+        ->call('scanProduct', "\x02SKU-SCAN-01\r\n")
+        ->assertSet('cart.0.sku', 'SKU-SCAN-01');
+
+    Event::assertDispatched(QrCodeScanned::class, fn (QrCodeScanned $event) => $event->code === 'SKU-SCAN-01'
+        && $event->source === 'cashier-pos'
+        && $event->field === 'scanInput');
 });
 
 it('can complete checkout and persist order with order items', function () {

@@ -30,13 +30,9 @@ class CustomFormattedScanner extends QrScanner
 
         $this->scanFormat($normalize);
 
-        $this->afterStateUpdated(function ($component, ?string $state) use ($normalize): void {
-            $normalized = $normalize($state);
-
-            if ($normalized !== $state) {
-                $component->state($normalized);
-            }
-        });
+        // Live scans (camera/hardware/typing) normalize here; scanFormat() above
+        // stays programmatic-only for formatScannedValue()/triggerOnScan() flows.
+        $this->normalizeUsing($normalize);
 
         return $this;
     }

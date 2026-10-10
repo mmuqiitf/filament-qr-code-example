@@ -104,6 +104,15 @@ This project has domain-specific skills available in `**/skills/**`. You MUST ac
 
 - Laravel can be deployed using [Laravel Cloud](https://cloud.laravel.com/), which is the fastest way to deploy and scale production Laravel applications.
 
+=== tests rules ===
+
+# Test Enforcement
+
+- Test every code change by adding or updating a test.
+- Run the affected tests and ensure they pass.
+- Test the changed behavior and its important failure modes, but do not add tests beyond them.
+- Read the `testing-best-practices` skill before writing tests.
+
 === laravel/core rules ===
 
 # Do Things the Laravel Way
@@ -172,5 +181,5 @@ This project has domain-specific skills available in `**/skills/**`. You MUST ac
 # Filament QR Code package workflow
 
 - `mmuqiitf/filament-qr-code` is linked via a Composer path repository (`../filament-qr-code`, symlink), so package PHP changes take effect immediately.
-- Package JS/CSS does NOT: Filament serves the bundle from `public/css|js/mmuqiitf/filament-qr-code/`, not from the package `dist/`. After any package `npm run build`, run `php artisan filament:assets` here, otherwise you are smoke-testing stale code.
+- Package JS/CSS does NOT: Filament serves the bundle from `public/css|js/mmuqiitf/filament-qr-code/`, not from the package `dist/`. After any package `npm run build`, run `php artisan filament:assets` here, otherwise you are smoke-testing stale code. `filament:assets` skips the lazy decoder `chunks/` dir, so also copy `vendor/mmuqiitf/filament-qr-code/resources/dist/chunks/*.js` to `public/js/mmuqiitf/filament-qr-code/chunks/` or first camera use 404s.
 - After package Blade changes, run `php artisan optimize:clear` (compiled views + Filament cache).

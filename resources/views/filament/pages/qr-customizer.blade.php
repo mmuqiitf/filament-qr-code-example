@@ -2,6 +2,29 @@
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
         {{-- Left: Configuration Form (7 cols) --}}
         <div class="lg:col-span-7 space-y-6">
+            <x-filament::section compact>
+                <x-slot name="heading">
+                    {{ __('Payload presets (QrPayload)') }}
+                </x-slot>
+                <div class="flex flex-wrap gap-2">
+                    <x-filament::button size="xs" color="gray" wire:click="applyPayloadPreset('wifi')">
+                        WiFi
+                    </x-filament::button>
+                    <x-filament::button size="xs" color="gray" wire:click="applyPayloadPreset('vcard')">
+                        vCard
+                    </x-filament::button>
+                    <x-filament::button size="xs" color="gray" wire:click="applyPayloadPreset('mailto')">
+                        Mailto
+                    </x-filament::button>
+                    <x-filament::button size="xs" color="gray" wire:click="applyPayloadPreset('sms')">
+                        SMS
+                    </x-filament::button>
+                    <x-filament::button size="xs" color="gray" wire:click="applyPayloadPreset('geo')">
+                        Geo
+                    </x-filament::button>
+                </div>
+            </x-filament::section>
+
             <form wire:submit.prevent="download">
                 {{ $this->form }}
             </form>

@@ -11,8 +11,13 @@ use Filament\Pages\Page;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Support\Str;
+use Mmuqiitf\FilamentQrCode\Concerns\HasHardwareScanner;
+use Mmuqiitf\FilamentQrCode\Events\QrCodeScanned;
 use Mmuqiitf\FilamentQrCode\Forms\Components\QrHardwareScannerListener;
 
+/**
+ * @property Schema $form
+ */
 class CashierCheckout extends Page
 {
     protected string $view = 'filament.pages.cashier-checkout';
@@ -64,7 +69,9 @@ class CashierCheckout extends Page
     /**
      * Cashiers scan with a handheld gun, so there is no camera UI here —
      * just the invisible hardware scanner interceptor catching bursts anywhere on
-     * the page and routing them into the SKU box.
+     * the page and routing them into the SKU box. Terminator-less guns flush
+     * after scanTimeoutMs (default 150); field QrScanner listeners stand down
+     * while this page-global listener is mounted.
      */
     public function form(Schema $schema): Schema
     {
@@ -76,7 +83,7 @@ class CashierCheckout extends Page
                 ])
                     ->autoFocusNext(false)
                     ->sound(true)
-                    ->hardwareScanner(terminators: ['Enter', 'Tab'], minBarcodeLength: 2),
+                    ->hardwareScanner(terminators: ['Enter', 'Tab'], minBarcodeLength: 2, burstThresholdMs: 50),
             ]);
     }
 
@@ -90,10 +97,15 @@ class CashierCheckout extends Page
 
     public function scanProduct(string $code): void
     {
-        $cleaned = trim($code);
-        if (empty($cleaned)) {
+        // Mirror the JS interceptor: strip gun framing (STX/ETX/CR/LF) and whitespace.
+        $cleaned = HasHardwareScanner::sanitizeScannedValue($code);
+        if ($cleaned === '') {
             return;
         }
+
+        // Server-observed scan: enters the QrCodeScanned audit trail (logged when
+        // qr-code.audit.enabled). Live bursts stay client-side until they reach us here.
+        event(new QrCodeScanned(code: $cleaned, source: 'cashier-pos', field: 'scanInput'));
 
         $product = Product::query()
             ->where('sku', $cleaned)

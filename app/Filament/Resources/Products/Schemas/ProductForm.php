@@ -30,14 +30,17 @@ class ProductForm
                         BarcodeFormat::Code128,
                         BarcodeFormat::Code39,
                     ])
+                    // Programmatic-only hook (formatScannedValue()/triggerOnScan flows).
+                    // Live camera/hardware scans normalize via normalizeUsing() below.
                     ->scanFormat(fn (?string $rawValue): ?string => $rawValue ? strtoupper(trim($rawValue)) : null)
-                    ->afterStateUpdated(function ($component, ?string $state): void {
-                        $normalized = filled($state) ? strtoupper(trim($state)) : $state;
-
-                        if ($normalized !== $state) {
-                            $component->state($normalized);
-                        }
-                    })
+                    ->normalizeUsing(fn ($rawValue) => filled($rawValue) ? strtoupper(trim((string) $rawValue)) : $rawValue)
+                    // Submit-time guard plus instant feedback: BAD-prefixed scans clear
+                    // immediately and dispatch a `qr-scan-rejected` event for notify().
+                    ->scanRules(['min:3'])
+                    ->rejectWhen(
+                        fn ($state) => str_starts_with((string) $state, 'BAD'),
+                        fn ($state) => "Rejected scan [{$state}]: reserved prefix.",
+                    )
                     ->sound(true)
                     ->vibrate(true)
                     ->beepFrequency(660)

@@ -8,7 +8,9 @@ use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use Mmuqiitf\FilamentQrCode\Enums\QrFormat;
 use Mmuqiitf\FilamentQrCode\Tables\Actions\DownloadQrAction;
+use Mmuqiitf\FilamentQrCode\Tables\Actions\DownloadQrBulkAction;
 use Mmuqiitf\FilamentQrCode\Tables\Columns\QrColumn;
 
 class ProductsTable
@@ -23,7 +25,10 @@ class ProductsTable
                     ->thumbnailSize(44)
                     ->modalSize(260)
                     ->previewable(true)
-                    ->downloadable(true),
+                    ->downloadable(true)
+                    // Large previews load lazily through the signed
+                    // filament-qr-code.image route (persistent L2 cache behind it).
+                    ->lazyModal(),
 
                 TextColumn::make('sku')
                     ->label('SKU')
@@ -63,6 +68,11 @@ class ProductsTable
             ])
             ->toolbarActions([
                 BulkActionGroup::make([
+                    DownloadQrBulkAction::make()
+                        ->qrData('sku')
+                        ->qrFileName(fn ($record): string => "product-{$record->sku}")
+                        ->qrFormat(QrFormat::Png)
+                        ->zipName('shelf-labels.zip'),
                     DeleteBulkAction::make(),
                 ]),
             ]);

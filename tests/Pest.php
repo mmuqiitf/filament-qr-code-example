@@ -18,6 +18,14 @@ pest()->extend(TestCase::class)
     ->use(RefreshDatabase::class)
     ->in('Feature');
 
+pest()->extend(TestCase::class)
+    ->use(RefreshDatabase::class)
+    ->in('Browser');
+
+// Browser tests drive a real headless Chrome (decoding takes seconds),
+// so allow slower interactions than the 5s default.
+pest()->browser()->timeout(15000);
+
 /*
 |--------------------------------------------------------------------------
 | Expectations

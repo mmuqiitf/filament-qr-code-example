@@ -6,6 +6,8 @@ use App\Filament\Resources\Products\Pages\ViewProduct;
 use App\Models\Product;
 use App\Models\User;
 use Livewire\Livewire;
+use Mmuqiitf\FilamentQrCode\Enums\QrFormat;
+use Mmuqiitf\FilamentQrCode\Tables\Actions\DownloadQrBulkAction;
 
 beforeEach(function () {
     $this->actingAs(User::factory()->create());
@@ -41,4 +43,30 @@ it('can render view product page with QrEntry', function () {
 
     Livewire::test(ViewProduct::class, ['record' => $product->getKey()])
         ->assertSuccessful();
+});
+
+it('normalizes SKUs live and rejects reserved prefixes instantly', function () {
+    Livewire::test(CreateProduct::class)
+        ->set('data.sku', '  prd-7700  ')
+        ->assertSet('data.sku', 'PRD-7700')
+        ->set('data.sku', 'BAD-001')
+        ->assertDispatched('qr-scan-rejected')
+        ->assertSet('data.sku', null);
+});
+
+it('exports selected products as a QR ZIP via the bulk action', function () {
+    $products = Product::factory()->count(2)->create();
+
+    $files = DownloadQrBulkAction::make()
+        ->qrData('sku')
+        ->qrFileName(fn ($record): string => "product-{$record->sku}")
+        ->qrFormat(QrFormat::Png)
+        ->recordsToFiles($products);
+
+    expect(array_keys($files))->toHaveCount(2);
+
+    foreach ($files as $name => $bytes) {
+        expect($name)->toEndWith('.png')
+            ->and($bytes)->not->toBeEmpty();
+    }
 });

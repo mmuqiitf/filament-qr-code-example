@@ -1,8 +1,7 @@
 <x-filament-panels::page>
     <div
         class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start"
-        x-on:qr-hardware-scanned.window="$wire.scanProduct($event.detail.value)"
-        x-on:qr-hardware-scanned.window="$wire.set('scanInput', '')"
+        x-on:qr-hardware-scanned.window="$wire.scanProduct($event.detail.value); $wire.set('scanInput', '')"
     >
         {{-- Left: Scanner Station & Cart Items (7 cols) --}}
         <div class="lg:col-span-7 space-y-6">

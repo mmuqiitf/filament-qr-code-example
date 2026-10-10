@@ -76,9 +76,9 @@ class WorkOrderSequence extends Page
                     ->description('One shared camera feed walks through every field below. Hardware bursts feed the active step directly.')
                     ->schema([
                         QrScanSequence::make([
-                            'batch_number' => '1. Batch / Job Ticket',
-                            'operator_badge' => '2. Operator ID Badge',
-                            'equipment_code' => '3. Machine / Equipment',
+                            ['key' => 'batch_number', 'label' => '1. Batch / Job Ticket'],
+                            ['key' => 'operator_badge', 'label' => '2. Operator ID Badge'],
+                            ['key' => 'equipment_code', 'label' => '3. Machine / Equipment'],
                         ])
                             // Shared feed decodes continuously: 15 fps halves main-thread decode cost vs the default.
                             ->fps(15)
@@ -90,7 +90,13 @@ class WorkOrderSequence extends Page
                                 BarcodeFormat::Ean13,
                             ])
                             ->preferRearCamera()
+                            // Own component state (read via mergeSequenceState()) with the
+                            // legacy prefix kept so installs without ->statePath() keep working.
+                            ->statePath('sequence')
                             ->statePathPrefix('data')
+                            // Live-step normalizer: applied on every read/merge, unlike the
+                            // programmatic-only scanFormat()/onStepScanned() hooks.
+                            ->normalizeStepUsing(fn ($rawValue) => strtoupper(trim((string) $rawValue)))
                             ->editable(fn (): bool => $this->allowCorrections)
                             ->sound(true)
                             ->vibrate(true)
@@ -106,15 +112,30 @@ class WorkOrderSequence extends Page
 
     public function submit(): void
     {
-        // Merge raw form data first: the sequence container writes scans
-        // straight into Livewire state via $wire.set, bypassing field
-        // components, so getState() alone would miss them.
-        $state = array_merge($this->data ?? [], $this->form->getState());
+        // The sequence container writes scans via $wire.set into both its own
+        // ->statePath('sequence') state and the legacy statePathPrefix() paths,
+        // so read it back through the helpers instead of hand-rolled merges.
+        // The container lives inside a Section, so search flattened components.
+        $sequence = null;
+        foreach ($this->form->getFlatComponents() as $component) {
+            if ($component instanceof QrScanSequence) {
+                $sequence = $component;
+                break;
+            }
+        }
 
-        $missing = collect(['batch_number', 'operator_badge', 'equipment_code'])
-            ->filter(fn (string $key): bool => blank($state[$key] ?? null));
+        $state = $sequence instanceof QrScanSequence
+            ? $sequence->mergeSequenceState($this->form->getState())
+            : array_merge($this->data ?? [], $this->form->getState());
 
-        if ($missing->isNotEmpty()) {
+        $missing = $sequence instanceof QrScanSequence
+            ? $sequence->getMissingSequenceKeys($state)
+            : collect(['batch_number', 'operator_badge', 'equipment_code'])
+                ->filter(fn (string $key): bool => blank($state[$key] ?? null))
+                ->values()
+                ->all();
+
+        if ($missing !== []) {
             Notification::make()
                 ->title('Incomplete sequence')
                 ->body('Scan the batch, operator, and equipment codes before submitting.')
@@ -139,6 +160,7 @@ class WorkOrderSequence extends Page
             ->send();
 
         $this->form->fill([
+            'sequence' => [],
             'batch_number' => '',
             'operator_badge' => '',
             'equipment_code' => '',

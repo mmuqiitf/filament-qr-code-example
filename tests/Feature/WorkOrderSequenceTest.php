@@ -47,6 +47,23 @@ it('notifies when a sequence step is captured', function () {
         ->assertNotified('Sequence step captured');
 });
 
+it('merges sequence component state and normalizes steps on submit', function () {
+    Livewire::test(WorkOrderSequence::class)
+        ->set('data.sequence', [
+            'batch_number' => '  batch-2026-x9  ',
+            'operator_badge' => 'op-4412',
+            'equipment_code' => 'station-09',
+        ])
+        ->set('data.notes', 'Normalized via normalizeStepUsing.')
+        ->call('submit')
+        ->assertHasNoFormErrors();
+
+    $order = WorkOrder::where('batch_number', 'BATCH-2026-X9')->first();
+    expect($order)->not->toBeNull()
+        ->and($order->operator_badge)->toBe('OP-4412')
+        ->and($order->equipment_code)->toBe('STATION-09');
+});
+
 it('can lock steps read-only and notifies on corrections', function () {
     Livewire::test(WorkOrderSequence::class)
         ->assertSet('allowCorrections', true)

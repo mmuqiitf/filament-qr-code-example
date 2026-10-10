@@ -38,3 +38,18 @@ it('can download a customized QR code as streamed response', function () {
         ->call('download')
         ->assertFileDownloaded('custom-qr-code.svg');
 });
+
+it('builds common payloads via QrPayload presets without hand-escaping', function () {
+    Livewire::test(QrCustomizer::class)
+        ->call('applyPayloadPreset', 'wifi')
+        ->assertSet('data.content', 'WIFI:T:WPA;S:Shop Floor;P:secret-1;;')
+        ->call('applyPayloadPreset', 'geo')
+        ->assertSet('data.content', 'geo:-6.2,106.8?q=Warehouse%207');
+
+    $dataUri = Livewire::test(QrCustomizer::class)
+        ->call('applyPayloadPreset', 'sms')
+        ->get('previewDataUri');
+
+    expect($dataUri)->toBeString()
+        ->and($dataUri)->toStartWith('data:image/svg+xml;base64,');
+});

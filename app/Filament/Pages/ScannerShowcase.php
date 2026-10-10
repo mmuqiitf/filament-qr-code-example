@@ -4,10 +4,12 @@ namespace App\Filament\Pages;
 
 use BackedEnum;
 use Filament\Actions\Action;
+use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
+use Livewire\Attributes\On;
 use Mmuqiitf\FilamentQrCode\Enums\BarcodeFormat;
 use Mmuqiitf\FilamentQrCode\Forms\Components\QrScanner;
 
@@ -40,18 +42,26 @@ class ScannerShowcase extends Page
         $this->form->fill();
     }
 
+    #[On('qr-scan-rejected')]
+    public function handleScanRejected(string $message): void
+    {
+        Notification::make()
+            ->title('Scan rejected')
+            ->body($message)
+            ->warning()
+            ->send();
+    }
+
     public function form(Schema $schema): Schema
     {
         return $schema
             ->statePath('data')
             ->components([
                 Section::make('1. Basic scanner')
-                    ->description('Defaults: every symbology, upload fallback, rear-camera preference.')
+                    ->description('Defaults: every symbology (effective 12 fps auto-degrade when unrestricted), upload fallback, rear-camera preference. Served over https/localhost — cameras are blocked in insecure contexts.')
                     ->schema([
                         QrScanner::make('basic_sku')
                             ->label('SKU')
-                            // Unrestricted symbologies decode every frame: 10 fps keeps low-end devices smooth.
-                            ->fps(10)
                             ->placeholder('Scan any code...'),
                     ]),
 
@@ -65,7 +75,7 @@ class ScannerShowcase extends Page
                     ]),
 
                 Section::make('3. Retail barcodes')
-                    ->description('One-dimensional symbologies get a wide decode band automatically.')
+                    ->description('One-dimensional symbologies get a wide decode band automatically. Live values normalize via normalizeUsing(); scanFormat() stays programmatic-only.')
                     ->schema([
                         QrScanner::make('retail_barcode')
                             ->label('EAN / UPC / Code 128')
@@ -77,11 +87,7 @@ class ScannerShowcase extends Page
                                 BarcodeFormat::Code128,
                             ])
                             ->scanFormat(fn (?string $rawValue): ?string => $rawValue ? trim($rawValue) : null)
-                            ->afterStateUpdated(function ($component, ?string $state): void {
-                                if (filled($state) && trim($state) !== $state) {
-                                    $component->state(trim($state));
-                                }
-                            })
+                            ->normalizeUsing(fn ($rawValue) => filled($rawValue) ? trim((string) $rawValue) : $rawValue)
                             ->placeholder('Scan a retail barcode...'),
                     ]),
 
@@ -95,14 +101,14 @@ class ScannerShowcase extends Page
                     ]),
 
                 Section::make('5. Custom feedback and burst tuning')
-                    ->description('Low slow beep, long vibration, and bursts shorter than 4 chars treated as typing.')
+                    ->description('Low slow beep, long vibration, bursts shorter than 4 chars treated as typing. Buffers are sanitized (STX/ETX/CR/LF stripped); terminator-less guns flush after the scan timeout.')
                     ->schema([
                         QrScanner::make('custom_feedback')
                             ->label('Tuned scanner')
                             ->beepFrequency(520)
                             ->beepDuration(150)
                             ->vibrateDuration(300)
-                            ->hardwareScanner(enabled: true, burstThresholdMs: 50, minBarcodeLength: 4)
+                            ->hardwareScanner(enabled: true, burstThresholdMs: 50, minBarcodeLength: 4, scanTimeoutMs: 150)
                             ->placeholder('Scan to hear the difference...'),
                     ]),
 
@@ -117,6 +123,21 @@ class ScannerShowcase extends Page
                         QrScanner::make('handoff_b')
                             ->label('Second stop')
                             ->placeholder('...lands here'),
+                    ]),
+
+                Section::make('7. Scan rules and instant reject')
+                    ->description('Submit-time scanRules() plus rejectWhen() for immediate feedback — BAD-prefixed scans clear and notify via qr-scan-rejected.')
+                    ->schema([
+                        QrScanner::make('guarded_sku')
+                            ->label('Guarded SKU')
+                            ->formats([BarcodeFormat::QrCode, BarcodeFormat::Code128])
+                            ->normalizeUsing(fn ($rawValue) => filled($rawValue) ? strtoupper(trim((string) $rawValue)) : $rawValue)
+                            ->scanRules(['min:3'])
+                            ->rejectWhen(
+                                fn ($state) => str_starts_with((string) $state, 'BAD'),
+                                'Reserved prefix — scan rejected.',
+                            )
+                            ->placeholder('Try BAD-001...'),
                     ]),
             ]);
     }
