@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "809e3b701022429a93617f70a9e5048d",
+    "content-hash": "d677d9c9f3474caf69fae8e217ddf897",
     "packages": [
         {
             "name": "anourvalar/eloquent-serialize",
@@ -3477,11 +3477,17 @@
         },
         {
             "name": "mmuqiitf/filament-qr-code",
-            "version": "dev-main",
+            "version": "v0.1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/mmuqiitf/filament-qr-code.git",
+                "reference": "a0ea2964f3c441cf280b3d992d521ecbc14afe45"
+            },
             "dist": {
-                "type": "path",
-                "url": "../filament-qr-code",
-                "reference": "59d68c3c3c503a19fb34e055ad39b24a82b839d1"
+                "type": "zip",
+                "url": "https://api.github.com/repos/mmuqiitf/filament-qr-code/zipball/a0ea2964f3c441cf280b3d992d521ecbc14afe45",
+                "reference": "a0ea2964f3c441cf280b3d992d521ecbc14afe45",
+                "shasum": ""
             },
             "require": {
                 "bacon/bacon-qr-code": "^3.0",
@@ -3518,25 +3524,7 @@
                     "Mmuqiitf\\FilamentQrCode\\": "src/"
                 }
             },
-            "autoload-dev": {
-                "psr-4": {
-                    "Mmuqiitf\\FilamentQrCode\\Tests\\": "tests/"
-                }
-            },
-            "scripts": {
-                "test": [
-                    "vendor/bin/pest"
-                ],
-                "analyse": [
-                    "vendor/bin/phpstan analyse"
-                ],
-                "format": [
-                    "vendor/bin/pint"
-                ],
-                "test-style": [
-                    "vendor/bin/pint --test"
-                ]
-            },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
@@ -3560,10 +3548,11 @@
                 "qr-code",
                 "sequential-scan"
             ],
-            "transport-options": {
-                "symlink": true,
-                "relative": true
-            }
+            "support": {
+                "issues": "https://github.com/mmuqiitf/filament-qr-code/issues",
+                "source": "https://github.com/mmuqiitf/filament-qr-code/tree/v0.1.0"
+            },
+            "time": "2026-10-10T03:40:55+00:00"
         },
         {
             "name": "monolog/monolog",
@@ -14137,9 +14126,7 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": {
-        "mmuqiitf/filament-qr-code": 20
-    },
+    "stability-flags": {},
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {

@@ -180,6 +180,6 @@ This project has domain-specific skills available in `**/skills/**`. You MUST ac
 
 # Filament QR Code package workflow
 
-- `mmuqiitf/filament-qr-code` is linked via a Composer path repository (`../filament-qr-code`, symlink), so package PHP changes take effect immediately.
+- `mmuqiitf/filament-qr-code` is installed from Packagist (`^0.1`), not a local path repo, so CI works on a fresh checkout. To test unreleased package changes locally, temporarily add a Composer path repository (`../filament-qr-code`, symlink) and revert before committing.
 - Package JS/CSS does NOT: Filament serves the bundle from `public/css|js/mmuqiitf/filament-qr-code/`, not from the package `dist/`. After any package `npm run build`, run `php artisan filament:assets` here, otherwise you are smoke-testing stale code. `filament:assets` skips the lazy decoder `chunks/` dir, so also copy `vendor/mmuqiitf/filament-qr-code/resources/dist/chunks/*.js` to `public/js/mmuqiitf/filament-qr-code/chunks/` or first camera use 404s.
 - After package Blade changes, run `php artisan optimize:clear` (compiled views + Filament cache).
