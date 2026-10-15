@@ -88,6 +88,8 @@ class ScannerShowcase extends Page
                             ])
                             ->scanFormat(fn (?string $rawValue): ?string => $rawValue ? trim($rawValue) : null)
                             ->normalizeUsing(fn ($rawValue) => filled($rawValue) ? trim((string) $rawValue) : $rawValue)
+                            // Scans post live on their own; typed values normalize on blur.
+                            ->live(onBlur: true)
                             ->placeholder('Scan a retail barcode...'),
                     ]),
 

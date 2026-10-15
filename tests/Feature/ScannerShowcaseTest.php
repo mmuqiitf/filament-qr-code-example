@@ -55,3 +55,8 @@ it('syncs typed guarded SKUs on blur so rejectWhen also covers manual entry', fu
     Livewire::test(ScannerShowcase::class)
         ->assertSeeHtml('wire:model.live.blur="data.guarded_sku"');
 });
+
+it('syncs typed retail barcodes on blur so normalizeUsing also covers manual entry', function () {
+    Livewire::test(ScannerShowcase::class)
+        ->assertSeeHtml('wire:model.live.blur="data.retail_barcode"');
+});
