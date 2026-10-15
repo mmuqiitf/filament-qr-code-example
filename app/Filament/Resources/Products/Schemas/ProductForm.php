@@ -75,7 +75,7 @@ class ProductForm
 
                 QrCodeDisplay::make('product_qr')
                     ->label('Generated Product QR Code')
-                    ->data(fn ($record, $get) => $record->sku ?? $get('sku'))
+                    ->data(fn ($record, $get) => filled($get('sku')) ? $get('sku') : $record?->sku)
                     ->size(180)
                     ->color('#0f172a')
                     ->caption('Official Product SKU Verification QR')

@@ -1,6 +1,7 @@
 <?php
 
 use App\Filament\Resources\Products\Pages\CreateProduct;
+use App\Filament\Resources\Products\Pages\EditProduct;
 use App\Filament\Resources\Products\Pages\ListProducts;
 use App\Filament\Resources\Products\Pages\ViewProduct;
 use App\Models\Product;
@@ -74,4 +75,19 @@ it('exports selected products as a QR ZIP via the bulk action', function () {
 it('syncs typed SKUs on blur so the QR preview and reject hook refresh', function () {
     Livewire::test(CreateProduct::class)
         ->assertSeeHtml('wire:model.live.blur="data.sku"');
+});
+
+it('previews the SKU being edited, not the saved one', function () {
+    $product = Product::factory()->create(['sku' => 'PRD-SAVED']);
+
+    $savedPreview = Livewire::test(EditProduct::class, ['record' => $product->getRouteKey()])->html();
+
+    $editedPreview = Livewire::test(EditProduct::class, ['record' => $product->getRouteKey()])
+        ->fillForm(['sku' => 'PRD-EDITED'])
+        ->html();
+
+    $qrImage = fn (string $html): string => preg_match('#<img src="(data:image/[^"]+)" alt="QR Code"#', $html, $m) ? $m[1] : '';
+
+    expect($qrImage($editedPreview))->not->toBe('')
+        ->and($qrImage($editedPreview))->not->toBe($qrImage($savedPreview));
 });
