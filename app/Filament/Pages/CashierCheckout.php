@@ -82,6 +82,9 @@ class CashierCheckout extends Page
                     'scanInput',
                 ])
                     ->autoFocusNext(false)
+                    // Bursts with no matching scan field must not land in
+                    // whatever input has focus (e.g. a search box).
+                    ->fallbackToAnyInput(false)
                     ->sound(true)
                     ->hardwareScanner(terminators: ['Enter', 'Tab'], minBarcodeLength: 2, burstThresholdMs: 50),
             ]);
