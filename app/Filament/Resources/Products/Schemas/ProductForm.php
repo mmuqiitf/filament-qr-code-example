@@ -37,6 +37,9 @@ class ProductForm
                     // Submit-time guard plus instant feedback: BAD-prefixed scans clear
                     // immediately and dispatch a `qr-scan-rejected` event for notify().
                     ->scanRules(['min:3'])
+                    // Scans post live on their own; typed SKUs sync on blur so
+                    // rejectWhen()/normalizeUsing() and the QR preview below refresh.
+                    ->live(onBlur: true)
                     ->rejectWhen(
                         fn ($state) => str_starts_with((string) $state, 'BAD'),
                         fn ($state) => "Rejected scan [{$state}]: reserved prefix.",

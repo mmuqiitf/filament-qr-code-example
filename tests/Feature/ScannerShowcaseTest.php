@@ -50,3 +50,8 @@ it('normalizes retail barcodes live and rejects guarded scans instantly', functi
         ->call('handleScanRejected', 'Reserved prefix — scan rejected.')
         ->assertNotified('Scan rejected');
 });
+
+it('syncs typed guarded SKUs on blur so rejectWhen also covers manual entry', function () {
+    Livewire::test(ScannerShowcase::class)
+        ->assertSeeHtml('wire:model.live.blur="data.guarded_sku"');
+});

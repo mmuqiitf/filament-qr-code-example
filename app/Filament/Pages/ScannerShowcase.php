@@ -126,13 +126,16 @@ class ScannerShowcase extends Page
                     ]),
 
                 Section::make('7. Scan rules and instant reject')
-                    ->description('Submit-time scanRules() plus rejectWhen() for immediate feedback — BAD-prefixed scans clear and notify via qr-scan-rejected.')
+                    ->description('Submit-time scanRules() plus rejectWhen() for immediate feedback — BAD-prefixed scans clear and notify via qr-scan-rejected (typed values are checked on blur).')
                     ->schema([
                         QrScanner::make('guarded_sku')
                             ->label('Guarded SKU')
                             ->formats([BarcodeFormat::QrCode, BarcodeFormat::Code128])
                             ->normalizeUsing(fn ($rawValue) => filled($rawValue) ? strtoupper(trim((string) $rawValue)) : $rawValue)
                             ->scanRules(['min:3'])
+                            // Scans post live on their own; typed values reach the
+                            // server (and these hooks) on blur.
+                            ->live(onBlur: true)
                             ->rejectWhen(
                                 fn ($state) => str_starts_with((string) $state, 'BAD'),
                                 'Reserved prefix — scan rejected.',

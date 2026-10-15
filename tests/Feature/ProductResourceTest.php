@@ -70,3 +70,8 @@ it('exports selected products as a QR ZIP via the bulk action', function () {
             ->and($bytes)->not->toBeEmpty();
     }
 });
+
+it('syncs typed SKUs on blur so the QR preview and reject hook refresh', function () {
+    Livewire::test(CreateProduct::class)
+        ->assertSeeHtml('wire:model.live.blur="data.sku"');
+});
