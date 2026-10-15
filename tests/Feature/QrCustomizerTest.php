@@ -53,3 +53,12 @@ it('builds common payloads via QrPayload presets without hand-escaping', functio
     expect($dataUri)->toBeString()
         ->and($dataUri)->toStartWith('data:image/svg+xml;base64,');
 });
+
+it('defaults every select to one of its options', function () {
+    $component = Livewire::test(QrCustomizer::class);
+
+    expect(['180', '240', '300', '400'])->toContain((string) $component->get('data.size'))
+        ->and(['0', '1', '2', '4'])->toContain((string) $component->get('data.margin'))
+        ->and(['L', 'M', 'Q', 'H'])->toContain($component->get('data.errorCorrection'))
+        ->and(['svg', 'png'])->toContain($component->get('data.format'));
+});
