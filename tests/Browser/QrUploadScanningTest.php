@@ -6,9 +6,14 @@ beforeEach(function () {
     $this->user = User::factory()->create();
 });
 
+// Filament 5.10 pulls session notifications with a Livewire request right
+// after the login page loads; filling the form before that round trip
+// finishes can lose the typed password, so let it settle first.
 function signIn(): mixed
 {
     return visit('/admin/login')
+        ->waitForEvent('networkidle')
+        ->wait(1)
         ->fill('input[type="email"]', test()->user->email)
         ->fill('input[type="password"]', 'password')
         ->press('button[type="submit"]')
