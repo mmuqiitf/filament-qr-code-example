@@ -3635,16 +3635,16 @@
         },
         {
             "name": "mmuqiitf/filament-qr-code",
-            "version": "v0.3.0",
+            "version": "v0.3.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/mmuqiitf/filament-qr-code.git",
-                "reference": "99ef7c5ffee1cc23b8558beab11d561fdec18d47"
+                "reference": "2d69a3a4695b0556171804b2a4ea770ce75c3e7d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/mmuqiitf/filament-qr-code/zipball/99ef7c5ffee1cc23b8558beab11d561fdec18d47",
-                "reference": "99ef7c5ffee1cc23b8558beab11d561fdec18d47",
+                "url": "https://api.github.com/repos/mmuqiitf/filament-qr-code/zipball/2d69a3a4695b0556171804b2a4ea770ce75c3e7d",
+                "reference": "2d69a3a4695b0556171804b2a4ea770ce75c3e7d",
                 "shasum": ""
             },
             "require": {
@@ -3708,9 +3708,9 @@
             ],
             "support": {
                 "issues": "https://github.com/mmuqiitf/filament-qr-code/issues",
-                "source": "https://github.com/mmuqiitf/filament-qr-code/tree/v0.3.0"
+                "source": "https://github.com/mmuqiitf/filament-qr-code/tree/v0.3.1"
             },
-            "time": "2026-10-15T15:47:55+00:00"
+            "time": "2026-10-16T10:06:43+00:00"
         },
         {
             "name": "monolog/monolog",
