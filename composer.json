@@ -12,7 +12,7 @@
         "laravel/tinker": "^3.0",
         "livewire/blaze": "^1.0",
         "livewire/livewire": "^4.1",
-        "mmuqiitf/filament-qr-code": "dev-main"
+        "mmuqiitf/filament-qr-code": "dev-fix/flash-feedback-2 as dev-main"
     },
     "require-dev": {
         "fakerphp/faker": "^1.24",

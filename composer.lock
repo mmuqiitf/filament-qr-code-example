@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "40bd53f842cfad86ae5ba6c591f292aa",
+    "content-hash": "9af9faebcfe0cadc4dcc48960c8494a6",
     "packages": [
         {
             "name": "anourvalar/eloquent-serialize",
@@ -3636,16 +3636,16 @@
         },
         {
             "name": "mmuqiitf/filament-qr-code",
-            "version": "dev-main",
+            "version": "dev-fix/flash-feedback-2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/mmuqiitf/filament-qr-code.git",
-                "reference": "a4ae4a5950ccc6aff0e059ba6ed018a0df94c38b"
+                "reference": "acbf748f147d3ca392ce834b6af6a319da02261e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/mmuqiitf/filament-qr-code/zipball/a4ae4a5950ccc6aff0e059ba6ed018a0df94c38b",
-                "reference": "a4ae4a5950ccc6aff0e059ba6ed018a0df94c38b",
+                "url": "https://api.github.com/repos/mmuqiitf/filament-qr-code/zipball/acbf748f147d3ca392ce834b6af6a319da02261e",
+                "reference": "acbf748f147d3ca392ce834b6af6a319da02261e",
                 "shasum": ""
             },
             "require": {
@@ -3670,7 +3670,6 @@
                 "phpstan/phpstan": "^2.0",
                 "phpstan/phpstan-deprecation-rules": "^2.0"
             },
-            "default-branch": true,
             "type": "library",
             "extra": {
                 "laravel": {
@@ -3710,9 +3709,9 @@
             ],
             "support": {
                 "issues": "https://github.com/mmuqiitf/filament-qr-code/issues",
-                "source": "https://github.com/mmuqiitf/filament-qr-code/tree/main"
+                "source": "https://github.com/mmuqiitf/filament-qr-code/tree/fix/flash-feedback-2"
             },
-            "time": "2026-10-16T19:35:02+00:00"
+            "time": "2026-10-16T19:48:37+00:00"
         },
         {
             "name": "monolog/monolog",
@@ -14286,7 +14285,14 @@
             "time": "2026-10-05T23:14:19+00:00"
         }
     ],
-    "aliases": [],
+    "aliases": [
+        {
+            "package": "mmuqiitf/filament-qr-code",
+            "version": "dev-fix/flash-feedback-2",
+            "alias": "dev-main",
+            "alias_normalized": "dev-main"
+        }
+    ],
     "minimum-stability": "stable",
     "stability-flags": {
         "mmuqiitf/filament-qr-code": 20

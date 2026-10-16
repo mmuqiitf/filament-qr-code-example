@@ -45,3 +45,52 @@ it('rejects an uploaded QR for an unknown SKU', function () {
         ->assertSee('Scan rejected')
         ->assertValue('input[placeholder="Scan PRD-1001..."]', '');
 });
+
+function recordSkuFieldClasses(mixed $page): void
+{
+    $page->script(<<<'JS'
+        () => {
+            const field = document.querySelector('[data-field-name="sku"]');
+            window.__skuClasses = [];
+            const start = performance.now();
+            const record = () => window.__skuClasses.push([Math.round(performance.now() - start), field.className]);
+            new MutationObserver(record).observe(document.body, { attributes: true, subtree: true, attributeFilter: ['class'] });
+            window.__skuField = field;
+        }
+        JS);
+}
+
+function skuFlashSeen(mixed $page): array
+{
+    return $page->script(<<<'JS'
+        () => ({
+            classes: window.__skuClasses,
+            sameNode: window.__skuField === document.querySelector('[data-field-name="sku"]'),
+        })
+        JS);
+}
+
+it('flashes the SKU field green after a valid upload closes the modal', function () {
+    $page = signIn()->navigate('/admin/server-side-checks');
+    recordSkuFieldClasses($page);
+
+    $page->click('button[title="Scan QR with camera"]')
+        ->attach('input[type="file"]', __DIR__.'/Fixtures/sku-valid-PRD-1001.png')
+        ->wait(1);
+
+    $seen = skuFlashSeen($page);
+    // Regression guard: the ring must land on the field wrapper (not the hidden file input) within ~1 s.
+    expect($seen['sameNode'])->toBeTrue()
+        ->and(collect($seen['classes'])->pluck(1)->contains(fn ($c) => str_contains($c, 'fi-qr-flash-success')))->toBeTrue();
+});
+
+it('flashes the SKU field red after an out-of-stock upload', function () {
+    $page = signIn()->navigate('/admin/server-side-checks');
+    recordSkuFieldClasses($page);
+
+    $page->click('button[title="Scan QR with camera"]')
+        ->attach('input[type="file"]', __DIR__.'/Fixtures/sku-out-of-stock-PRD-1007.png')
+        ->wait(1);
+
+    expect(collect(skuFlashSeen($page)['classes'])->pluck(1)->contains(fn ($c) => str_contains($c, 'fi-qr-flash-danger')))->toBeTrue();
+});
