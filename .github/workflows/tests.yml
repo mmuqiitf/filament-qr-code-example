@@ -37,13 +37,6 @@ jobs:
       - name: Install Playwright browsers
         run: npx playwright install --with-deps chromium
 
-      - name: Publish lazy decoder chunk
-        # filament:assets only copies registered single files, never the
-        # decoder chunks/ dir, so first camera/upload use would 404 without this.
-        run: |
-          mkdir -p public/js/mmuqiitf/filament-qr-code/chunks
-          cp vendor/mmuqiitf/filament-qr-code/resources/dist/chunks/*.js public/js/mmuqiitf/filament-qr-code/chunks/
-
       - name: Run CI Checks
         run: composer ci:check
 
