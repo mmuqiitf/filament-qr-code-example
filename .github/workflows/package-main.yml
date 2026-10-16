@@ -1,0 +1,124 @@
+name: package-main
+
+# Nightly canary: run the example against filament-qr-code's dev-main so
+# package regressions surface before a release. The composer/asset changes
+# made here are never committed.
+
+on:
+  schedule:
+    # 19:17 UTC = 02:17 Asia/Jakarta (odd minute avoids the top-of-hour rush).
+    - cron: '17 19 * * *'
+  workflow_dispatch:
+  # Also run when this workflow itself changes, so a PR proves it passes
+  # (workflow_dispatch only works once the file is on the default branch).
+  pull_request:
+    paths:
+      - .github/workflows/package-main.yml
+  repository_dispatch:
+    types: [package-main-updated]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: package-main
+  cancel-in-progress: true
+
+jobs:
+  package-main:
+    name: Example against filament-qr-code dev-main
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 # v2
+        with:
+          php-version: '8.4'
+          tools: composer:v2
+          coverage: none
+
+      - name: Setup Node
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: '22'
+
+      - name: Setup Application
+        run: composer setup
+
+      - name: Require filament-qr-code dev-main
+        run: composer require mmuqiitf/filament-qr-code:dev-main -W --no-interaction
+
+      - name: Show the package commit under test
+        run: composer show mmuqiitf/filament-qr-code | grep -E '^(versions|source|dist)'
+
+      - name: Publish Filament assets
+        run: php artisan filament:assets
+
+      - name: Build frontend
+        run: npm run build
+
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps chromium
+
+      - name: Run Unit, Feature and Browser suites
+        run: |
+          php artisan config:clear --ansi
+          php artisan test
+
+  report:
+    name: Track nightly failures
+    needs: package-main
+    if: always() && github.event_name == 'schedule'
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+
+    steps:
+      - name: Open, update or close the package-main-broken issue
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
+        env:
+          RESULT: ${{ needs.package-main.result }}
+        with:
+          script: |
+            const label = 'package-main-broken';
+            const { owner, repo } = context.repo;
+            const runUrl = `${context.serverUrl}/${owner}/${repo}/actions/runs/${context.runId}`;
+            const failed = process.env.RESULT === 'failure';
+
+            const { data: open } = await github.rest.issues.listForRepo({
+              owner, repo, state: 'open', labels: label, per_page: 1,
+            });
+            const issue = open[0];
+
+            if (failed) {
+              try {
+                await github.rest.issues.getLabel({ owner, repo, name: label });
+              } catch {
+                await github.rest.issues.createLabel({
+                  owner, repo, name: label, color: 'd73a4a',
+                  description: 'Nightly run against filament-qr-code dev-main is failing',
+                });
+              }
+
+              const body = `Nightly run against \`mmuqiitf/filament-qr-code:dev-main\` failed: ${runUrl}`;
+              if (issue) {
+                await github.rest.issues.createComment({ owner, repo, issue_number: issue.number, body });
+              } else {
+                await github.rest.issues.create({
+                  owner, repo, labels: [label],
+                  title: 'Example fails against filament-qr-code dev-main',
+                  body,
+                });
+              }
+            } else if (process.env.RESULT === 'success' && issue) {
+              await github.rest.issues.createComment({
+                owner, repo, issue_number: issue.number,
+                body: `Nightly run passes again: ${runUrl}`,
+              });
+              await github.rest.issues.update({ owner, repo, issue_number: issue.number, state: 'closed' });
+            }
