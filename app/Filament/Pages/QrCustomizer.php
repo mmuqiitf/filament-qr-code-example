@@ -44,7 +44,7 @@ class QrCustomizer extends Page
             'content' => 'https://filamentphp.com',
             'color' => '#0f172a',
             'backgroundColor' => '#ffffff',
-            'size' => 260,
+            'size' => 240,
             'margin' => 2,
             'errorCorrection' => 'M',
             'format' => 'svg',

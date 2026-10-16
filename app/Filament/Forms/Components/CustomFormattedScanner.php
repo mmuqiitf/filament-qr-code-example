@@ -30,8 +30,9 @@ class CustomFormattedScanner extends QrScanner
 
         $this->scanFormat($normalize);
 
-        // Live scans (camera/hardware/typing) normalize here; scanFormat() above
-        // stays programmatic-only for formatScannedValue()/triggerOnScan() flows.
+        // Live camera/hardware scans normalize here (typed input too, once it
+        // syncs, e.g. with ->live(onBlur: true)); scanFormat() above stays
+        // programmatic-only for formatScannedValue()/triggerOnScan() flows.
         $this->normalizeUsing($normalize);
 
         return $this;

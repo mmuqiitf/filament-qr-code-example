@@ -37,6 +37,9 @@ class ProductForm
                     // Submit-time guard plus instant feedback: BAD-prefixed scans clear
                     // immediately and dispatch a `qr-scan-rejected` event for notify().
                     ->scanRules(['min:3'])
+                    // Scans post live on their own; typed SKUs sync on blur so
+                    // rejectWhen()/normalizeUsing() and the QR preview below refresh.
+                    ->live(onBlur: true)
                     ->rejectWhen(
                         fn ($state) => str_starts_with((string) $state, 'BAD'),
                         fn ($state) => "Rejected scan [{$state}]: reserved prefix.",
@@ -72,7 +75,7 @@ class ProductForm
 
                 QrCodeDisplay::make('product_qr')
                     ->label('Generated Product QR Code')
-                    ->data(fn ($record, $get) => $record->sku ?? $get('sku'))
+                    ->data(fn ($record, $get) => filled($get('sku')) ? $get('sku') : $record?->sku)
                     ->size(180)
                     ->color('#0f172a')
                     ->caption('Official Product SKU Verification QR')
