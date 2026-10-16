@@ -73,6 +73,14 @@ class DatabaseSeeder extends Seeder
                 'stock' => 8,
                 'description' => 'WQHD 144Hz HDR curved gaming and productivity display.',
             ],
+            [
+                'name' => 'Rugged Mobile Data Terminal',
+                'sku' => 'PRD-1007',
+                'barcode' => '8901234567896',
+                'price' => 899.00,
+                'stock' => 0,
+                'description' => 'Out-of-stock Android handheld, used by the server-side checks demo.',
+            ],
         ];
 
         foreach ($demoProducts as $productData) {
