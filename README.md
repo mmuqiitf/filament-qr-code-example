@@ -16,11 +16,11 @@ composer dev          # serve on http://localhost:8000/admin
 |---|---|---|
 | Scanner Showcase | `/admin/scanner-showcase` | `QrScanner` options: formats, upload, focus handoff |
 | Server-side Checks | `/admin/server-side-checks` | `validateUsing()`, `lookup()`, accept/reject feedback |
-| Cashier Checkout | `/admin/cashier-checkout` | `QrCollector` cart with a handheld scanner |
+| Cashier POS Checkout | `/admin/cashier-checkout` | `QrHardwareScannerListener` cart with a handheld scanner |
 | POS Checkout | `/admin/pos-checkout` | Continuous, page-wide scanning (see below) |
 | Sequential Scanning | `/admin/work-order-sequence` | Plain `QrScanSequence` checklist |
 | Goods Receiving | `/admin/goods-receiving` | Checked, wedge-driven sequence (see below) |
-| QR Customizer | `/admin/qr-customizer` | Generating and styling QR codes |
+| Interactive QR Customizer | `/admin/qr-customizer` | Generating and styling QR codes |
 
 ### POS Checkout
 
