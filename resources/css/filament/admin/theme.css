@@ -3,3 +3,19 @@
 @source '../../../../app/Filament/**/*';
 @source '../../../../resources/views/**/*';
 @source '../../../../vendor/mmuqiitf/filament-qr-code/resources/views/**/*';
+
+/*
+ * filament-qr-code styling hooks: the Manufacturing station sequence gets
+ * ->extraAttributes(['class' => 'mfg-station']); the package's CSS variables
+ * re-theme its viewfinder without touching the views.
+ */
+.mfg-station {
+    --fi-qr-viewfinder-radius: 1.25rem;
+    --fi-qr-reticle-color: #f59e0b;
+    --fi-qr-laser-color: #f59e0b;
+    --fi-qr-flash-success: rgb(16 185 129);
+}
+
+.mfg-station .fi-qr-sequence-step[data-qr-step-active='false'] {
+    text-decoration: line-through;
+}
