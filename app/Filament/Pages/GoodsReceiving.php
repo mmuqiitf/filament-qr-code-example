@@ -15,8 +15,9 @@ use Mmuqiitf\FilamentQrCode\Forms\Components\QrScanSequence;
 use Mmuqiitf\FilamentQrCode\Support\ScanStep;
 
 /**
- * Goods receiving with a handheld scanner: a sticky purchase order, an
- * optional lot, a SKU looked up in Products and one serial per unit.
+ * Goods receiving with a handheld scanner: a sticky purchase order, a SKU
+ * looked up in Products, an optional lot and one serial per unit. An
+ * unlabelled item skips the lot: its first serial lands in the serials step.
  * The whole item is checked once complete and received automatically.
  *
  * @property Schema $form
@@ -68,13 +69,14 @@ class GoodsReceiving extends Page
                             ->label('Purchase order')
                             ->validateUsing(['regex:/^PO-\d+$/'])
                             ->sticky(),
-                        ScanStep::make('lot')
-                            ->label('Lot (if labelled)')
-                            ->validateUsing(['regex:/^LOT-[A-Z0-9]+$/'])
-                            ->optional(),
                         ScanStep::make('sku')
                             ->label('SKU')
                             ->lookup(Product::class, 'sku'),
+                        ScanStep::make('lot')
+                            ->label('Lot (if labelled)')
+                            ->validateUsing(['regex:/^LOT-[A-Z0-9]+$/'])
+                            // Optional: a serial scanned here gives way to the serials step.
+                            ->optional(),
                         ScanStep::make('serials')
                             ->label('Serial numbers')
                             ->validateUsing(['regex:/^SN-[A-Z0-9-]+$/'])
@@ -130,7 +132,7 @@ class GoodsReceiving extends Page
             ->success()
             ->send();
 
-        // Keep the sticky PO for the next item, like the sequence's own reset.
-        $this->data['receipt'] = ['po' => $receipt['po']];
+        // Start the next item, keeping the sticky PO (same as the sequence's own reset).
+        $this->form->getComponent(fn ($component): bool => $component instanceof QrScanSequence)?->resetSequence();
     }
 }
