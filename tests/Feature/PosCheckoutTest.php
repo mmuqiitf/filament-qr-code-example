@@ -94,3 +94,30 @@ it('clears the cart', function () {
 
     expect($test->get('cart'))->toBe([]);
 });
+
+it('changes options in place, without a wire:key re-mount', function () {
+    $test = Livewire::test(PosCheckout::class);
+
+    expect($test->html())->not->toContain('pos-scanner-')
+        ->and(method_exists(PosCheckout::class, 'getOptionsKey'))->toBeFalse()
+        ->and($test->html())->toContain('&quot;pauseOnReject&quot;:false');
+
+    $test->set('pauseOnReject', true);
+
+    // The scanner reads the new options from data-qr-options on the next morph.
+    expect($test->html())->toContain('&quot;pauseOnReject&quot;:true');
+});
+
+it('uppercases typed or scanned codes before the lookup', function () {
+    $test = Livewire::test(PosCheckout::class);
+
+    expect(posScan($test, ' prd-1001 ')->effects['returns'][0])->toMatchArray(['passes' => true])
+        ->and($test->get('cart'))->toHaveKey('PRD-1001')
+        ->and(posScanner($test)->getScanPayload()['normalize'])->toMatchArray(['uppercase' => true]);
+});
+
+it('offers pause and resume buttons that target the scanner by state path', function () {
+    Livewire::test(PosCheckout::class)
+        ->assertSeeHtml("\$dispatch('qr-scanner-pause', { field: 'data.scan' })")
+        ->assertSeeHtml("\$dispatch('qr-scanner-resume', { field: 'data.scan' })");
+});

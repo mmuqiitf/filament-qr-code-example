@@ -27,9 +27,17 @@
             </div>
         </x-filament::section>
 
-        {{-- A new key re-creates the scanner so the switched options take effect. --}}
-        <div wire:key="pos-scanner-{{ $this->getOptionsKey() }}">
-            {{ $this->form }}
+        {{-- The switches above change the scanner's options in place; no re-mount needed. --}}
+        {{ $this->form }}
+
+        <div class="flex gap-2">
+            {{-- Runtime control: window events aimed at the scanner by its state path. --}}
+            <x-filament::button size="sm" color="gray" icon="heroicon-o-pause" x-on:click="$dispatch('qr-scanner-pause', { field: 'data.scan' })">
+                {{ __('Pause scanning') }}
+            </x-filament::button>
+            <x-filament::button size="sm" color="gray" icon="heroicon-o-play" x-on:click="$dispatch('qr-scanner-resume', { field: 'data.scan' })">
+                {{ __('Resume') }}
+            </x-filament::button>
         </div>
 
         <x-filament::section heading="{{ __('Cart') }}">
