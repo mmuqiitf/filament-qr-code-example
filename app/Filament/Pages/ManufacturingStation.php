@@ -12,6 +12,7 @@ use Filament\Pages\Page;
 use Filament\Panel;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
+use LogicException;
 use Mmuqiitf\FilamentQrCode\Enums\BarcodeFormat;
 use Mmuqiitf\FilamentQrCode\Forms\Components\QrScanSequence;
 use Mmuqiitf\FilamentQrCode\Support\ScanResult;
@@ -200,7 +201,12 @@ class ManufacturingStation extends Page
 
     protected function sequence(): QrScanSequence
     {
-        /** @var QrScanSequence */
-        return $this->form->getComponent(fn ($component): bool => $component instanceof QrScanSequence);
+        $sequence = $this->form->getComponent(fn ($component): bool => $component instanceof QrScanSequence);
+
+        if (! $sequence instanceof QrScanSequence) {
+            throw new LogicException('The form has no QrScanSequence.');
+        }
+
+        return $sequence;
     }
 }

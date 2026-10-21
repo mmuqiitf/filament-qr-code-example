@@ -10,6 +10,7 @@ use Filament\Pages\Page;
 use Filament\Panel;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
+use LogicException;
 use Mmuqiitf\FilamentQrCode\Enums\BarcodeFormat;
 use Mmuqiitf\FilamentQrCode\Forms\Components\QrScanSequence;
 use Mmuqiitf\FilamentQrCode\Support\ScanStep;
@@ -133,6 +134,17 @@ class GoodsReceiving extends Page
             ->send();
 
         // Start the next item, keeping the sticky PO (same as the sequence's own reset).
-        $this->form->getComponent(fn ($component): bool => $component instanceof QrScanSequence)?->resetSequence();
+        $this->sequence()->resetSequence();
+    }
+
+    protected function sequence(): QrScanSequence
+    {
+        $sequence = $this->form->getComponent(fn ($component): bool => $component instanceof QrScanSequence);
+
+        if (! $sequence instanceof QrScanSequence) {
+            throw new LogicException('The form has no QrScanSequence.');
+        }
+
+        return $sequence;
     }
 }

@@ -105,7 +105,7 @@ class QrLabels extends Page
      */
     public function labels(): array
     {
-        return match ($this->data['set'] ?? 'products') {
+        return array_values(match ($this->data['set'] ?? 'products') {
             'products' => Product::query()->orderBy('sku')->get()
                 ->map(fn (Product $product): array => ['code' => (string) $product->sku, 'caption' => (string) $product->name])->all(),
             'work-orders' => AssemblyOrder::query()->where('status', 'open')->orderBy('number')->get()
@@ -119,7 +119,7 @@ class QrLabels extends Page
                 ['code' => 'RW-07', 'caption' => 'Rework reason'],
             ],
             default => [],
-        };
+        });
     }
 
     /**
