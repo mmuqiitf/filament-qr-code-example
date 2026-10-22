@@ -6,7 +6,7 @@
             heading="{{ __('Receive with a handheld scanner') }}"
         >
             <p class="text-xs mt-1">
-                {{ __('Scan PO-7001, then a lot such as LOT-A1 (or skip it by scanning the SKU straight away), then PRD-1001 and one serial per unit, such as SN-PRD-1001-0001. The PO stays for the next item; use Clear to change it.') }}
+                {{ __('Scan PO-7001, then PRD-1001, then a lot such as LOT-A1 (or skip it by scanning the first serial straight away), then one serial per unit, such as SN-PRD-1001-0001. The PO stays for the next item; use Clear to change it.') }}
             </p>
         </x-filament::callout>
 

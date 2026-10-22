@@ -50,3 +50,15 @@ it('receives an item from handheld bursts without focusing anything', function (
         ->po_number->toBe('PO-7001')
         ->serials->toBe(['SN-PRD-1001-0001', 'SN-PRD-1001-0002']);
 });
+
+it('records a lot scanned between the SKU and the serials', function () {
+    $page = signIn()->navigate('/admin/goods-receiving')->waitForEvent('networkidle');
+
+    foreach (['PO-7001', 'PRD-1001', 'LOT-A1', 'SN-PRD-1001-0001', 'SN-PRD-1001-0002'] as $code) {
+        wedgeBurst($page, $code);
+    }
+
+    $page->wait(1)->assertSee('Received Wireless Scanner')->assertNoJavaScriptErrors();
+
+    expect(GoodsReceipt::sole()->lot_number)->toBe('LOT-A1');
+});

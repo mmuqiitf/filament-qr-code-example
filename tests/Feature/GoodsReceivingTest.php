@@ -35,16 +35,16 @@ it('serves the page at /admin/goods-receiving under the goodsReceiving route nam
 it('receives an item, skips the optional lot and keeps the PO for the next item', function () {
     $test = Livewire::test(GoodsReceiving::class);
 
-    expect(receivingScan($test, 'po', 'PO-7001'))->toMatchArray(['passes' => true, 'next_step' => 'lot'])
-        // No lot label on this item: the SKU fits the next step, so the lot is skipped.
-        ->and(receivingScan($test, 'lot', 'PRD-1001'))->toMatchArray(['passes' => true, 'step' => 'sku', 'skipped' => ['lot'], 'next_step' => 'serials'])
-        ->and(receivingScan($test, 'serials', 'SN-PRD-1001-0001'))->toMatchArray(['passes' => true, 'next_step' => 'serials'])
+    expect(receivingScan($test, 'po', 'PO-7001'))->toMatchArray(['passes' => true, 'next_step' => 'sku'])
+        ->and(receivingScan($test, 'sku', 'PRD-1001'))->toMatchArray(['passes' => true, 'next_step' => 'lot'])
+        // No lot label on this item: the first serial fits the next (repeat) step, so the lot is skipped.
+        ->and(receivingScan($test, 'lot', 'SN-PRD-1001-0001'))->toMatchArray(['passes' => true, 'step' => 'serials', 'skipped' => ['lot'], 'next_step' => 'serials'])
         ->and(receivingScan($test, 'serials', 'SN-PRD-1001-0002'))->toMatchArray([
             'completed' => true,
             'submitted' => true,
             'reset' => true,
             'values' => ['po' => 'PO-7001'],
-            'next_step' => 'lot',
+            'next_step' => 'sku',
         ]);
 
     $receipt = GoodsReceipt::sole();
@@ -59,8 +59,8 @@ it('records the lot when one is scanned', function () {
     $test = Livewire::test(GoodsReceiving::class);
 
     receivingScan($test, 'po', 'PO-7001');
-    expect(receivingScan($test, 'lot', 'LOT-A1'))->toMatchArray(['next_step' => 'sku']);
     receivingScan($test, 'sku', 'PRD-1001');
+    expect(receivingScan($test, 'lot', 'LOT-A1'))->toMatchArray(['passes' => true, 'next_step' => 'serials']);
     receivingScan($test, 'serials', 'SN-PRD-1001-0001');
     receivingScan($test, 'serials', 'SN-PRD-1001-0002');
 
@@ -71,10 +71,10 @@ it('rejects an unknown SKU and a duplicate serial', function () {
     $test = Livewire::test(GoodsReceiving::class);
 
     receivingScan($test, 'po', 'PO-7001');
-    receivingScan($test, 'lot', 'LOT-A1');
     expect(receivingScan($test, 'sku', 'PRD-9999'))->toMatchArray(['passes' => false, 'next_step' => 'sku']);
 
     receivingScan($test, 'sku', 'PRD-1001');
+    receivingScan($test, 'lot', 'LOT-A1');
     receivingScan($test, 'serials', 'SN-PRD-1001-0001');
 
     expect(receivingScan($test, 'serials', 'SN-PRD-1001-0001'))->toMatchArray(['passes' => false, 'next_step' => 'serials']);
@@ -84,8 +84,8 @@ it('jumps back to the serials when they belong to another SKU', function () {
     $test = Livewire::test(GoodsReceiving::class);
 
     receivingScan($test, 'po', 'PO-7001');
-    receivingScan($test, 'lot', 'LOT-A1');
     receivingScan($test, 'sku', 'PRD-1001');
+    receivingScan($test, 'lot', 'LOT-A1');
     receivingScan($test, 'serials', 'SN-PRD-2002-0001');
 
     expect(receivingScan($test, 'serials', 'SN-PRD-2002-0002'))->toMatchArray([
@@ -101,8 +101,8 @@ it('waits for the Receive button when auto-submit is off and re-checks on submit
     $test = Livewire::test(GoodsReceiving::class)->set('autoSubmit', false);
 
     receivingScan($test, 'po', 'PO-7001');
-    receivingScan($test, 'lot', 'LOT-A1');
     receivingScan($test, 'sku', 'PRD-1001');
+    receivingScan($test, 'lot', 'LOT-A1');
     receivingScan($test, 'serials', 'SN-PRD-1001-0001');
 
     expect(receivingScan($test, 'serials', 'SN-PRD-1001-0002'))->toMatchArray(['completed' => true, 'submitted' => null]);
@@ -120,8 +120,8 @@ it('collects as many serials as the item quantity', function () {
     $test = Livewire::test(GoodsReceiving::class)->set('quantity', 3);
 
     receivingScan($test, 'po', 'PO-7001');
-    receivingScan($test, 'lot', 'LOT-A1');
     receivingScan($test, 'sku', 'PRD-1001');
+    receivingScan($test, 'lot', 'LOT-A1');
     receivingScan($test, 'serials', 'SN-PRD-1001-0001');
 
     expect(receivingScan($test, 'serials', 'SN-PRD-1001-0002'))->toMatchArray(['completed' => false, 'next_step' => 'serials'])

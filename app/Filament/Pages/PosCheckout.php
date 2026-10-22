@@ -19,6 +19,8 @@ use Mmuqiitf\FilamentQrCode\Forms\Components\QrScanner;
  * POS line entry: continuous, page-wide scanning with a Product lookup.
  * Every accepted scan adds a cart line; the same SKU again bumps the quantity
  * (merging lines is the app's job, done here in addToCart()).
+ * The option switches change the scanner in place: its options follow the
+ * server on every re-render, with no wire:key re-mount (P2.1).
  *
  * @property Schema $form
  */
@@ -76,6 +78,8 @@ class PosCheckout extends Page
                     ->mode(ScanMode::Continuous)
                     ->hardwareInput(scope: HardwareInputScope::Page)
                     ->formats([BarcodeFormat::QrCode, BarcodeFormat::Code128, BarcodeFormat::Ean13])
+                    // Handhelds set up for lower case still match: cleaned in the browser and on the server.
+                    ->normalizeWith(uppercase: true)
                     ->lookup(Product::class, 'sku')
                     ->onScanned(fn (Product $record) => $this->addToCart($record))
                     ->continuousDisplay(fn (): ContinuousDisplay => $this->keepLastCode ? ContinuousDisplay::LastCode : ContinuousDisplay::Empty)
@@ -114,14 +118,6 @@ class PosCheckout extends Page
     public function getTotal(): float
     {
         return array_sum(array_map(fn (array $line): float => $line['price'] * $line['quantity'], $this->cart));
-    }
-
-    /**
-     * Changing a switch re-renders the scanner with fresh options.
-     */
-    public function getOptionsKey(): string
-    {
-        return implode('-', [(int) $this->keepLastCode, (int) $this->pauseOnReject, (int) $this->keepCameraOpen]);
     }
 
     /**
