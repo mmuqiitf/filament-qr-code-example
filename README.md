@@ -1,10 +1,6 @@
 # filament-qr-code example app
 
-A Filament v5 panel that shows [mmuqiitf/filament-qr-code](https://github.com/mmuqiitf/filament-qr-code) in realistic flows.
-
-> **TODO(0.6.0):** this branch runs the unreleased P2 API (runtime control, extension points) from the package's
-> `main`: `composer.json` requires `dev-main` through a `vcs` repository. After 0.6.0 is released, require `^0.6`,
-> drop the `repositories` entry and the `extra.todo` note, and run `composer update mmuqiitf/filament-qr-code`.
+A Filament v5 panel that shows [mmuqiitf/filament-qr-code](https://github.com/mmuqiitf/filament-qr-code) (`^0.6`) in realistic flows.
 
 ## Setup
 
