@@ -14,6 +14,7 @@ use Livewire\Livewire;
 use Mmuqiitf\FilamentQrCode\Forms\Components\QrCollector;
 use Mmuqiitf\FilamentQrCode\Forms\Components\QrHardwareScannerListener;
 use Mmuqiitf\FilamentQrCode\Forms\Components\QrScanner;
+use Mmuqiitf\FilamentQrCode\Forms\Components\QrScanSequence;
 
 beforeEach(function () {
     $this->actingAs(User::factory()->create());
@@ -57,7 +58,11 @@ it('ships the P0 interceptor options in the cashier listener payload', function 
         ->hardwareScanner(terminators: ['Enter', 'Tab'], minBarcodeLength: 2, burstThresholdMs: 50)
         ->getScanPayload();
 
-    expect($payload['minFastKeys'])->toBe(1)
+    // 1.0 defaults min_fast_keys to 3 (0.x: 1). TODO(1.0.0): once composer.json
+    // requires ^1.0, drop the 0.x branch and expect 3 only.
+    $defaultMinFastKeys = method_exists(QrScanSequence::class, 'statePathPrefix') ? 1 : 3;
+
+    expect($payload['minFastKeys'])->toBe($defaultMinFastKeys)
         ->and($payload['fallbackToAnyInput'])->toBeTrue()
         ->and($payload['fields'])->toBe(['scanInput']);
 });

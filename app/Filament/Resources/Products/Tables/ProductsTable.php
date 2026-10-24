@@ -27,7 +27,7 @@ class ProductsTable
                     ->previewable(true)
                     ->downloadable(true)
                     // Large previews load lazily through the signed
-                    // filament-qr-code.image route (persistent L2 cache behind it).
+                    // filamentQrCode.image route (persistent L2 cache behind it).
                     ->lazyModal(),
 
                 TextColumn::make('sku')
