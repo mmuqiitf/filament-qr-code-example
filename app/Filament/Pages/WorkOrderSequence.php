@@ -90,10 +90,8 @@ class WorkOrderSequence extends Page
                                 BarcodeFormat::Ean13,
                             ])
                             ->preferRearCamera()
-                            // Own component state (read via mergeSequenceState()) with the
-                            // legacy prefix kept so installs without ->statePath() keep working.
+                            // Own component state, read back via mergeSequenceState().
                             ->statePath('sequence')
-                            ->statePathPrefix('data')
                             // Live-step normalizer: applied on every read/merge, unlike the
                             // programmatic-only scanFormat()/onStepScanned() hooks.
                             ->normalizeStepUsing(fn ($rawValue) => strtoupper(trim((string) $rawValue)))
@@ -112,9 +110,10 @@ class WorkOrderSequence extends Page
 
     public function submit(): void
     {
-        // The sequence container writes scans via $wire.set into both its own
-        // ->statePath('sequence') state and the legacy statePathPrefix() paths,
-        // so read it back through the helpers instead of hand-rolled merges.
+        // The sequence container writes scans via $wire.set into its own
+        // ->statePath('sequence') state and the flat paths under the form's
+        // statePath('data'), so read it back through the helpers instead of
+        // hand-rolled merges.
         // The container lives inside a Section, so search flattened components.
         $sequence = null;
         foreach ($this->form->getFlatComponents() as $component) {
