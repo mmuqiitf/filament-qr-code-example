@@ -12,7 +12,7 @@
         "laravel/tinker": "^3.0",
         "livewire/blaze": "^1.0",
         "livewire/livewire": "^4.1",
-        "mmuqiitf/filament-qr-code": "^0.6"
+        "mmuqiitf/filament-qr-code": "dev-main"
     },
     "require-dev": {
         "fakerphp/faker": "^1.24",
@@ -96,7 +96,8 @@
     "extra": {
         "laravel": {
             "dont-discover": []
-        }
+        },
+        "todo": "TODO(1.0.0): after filament-qr-code 1.0.0 is tagged, require \"mmuqiitf/filament-qr-code\": \"^1.0\", drop the vcs repository and run composer update mmuqiitf/filament-qr-code (both are only here to run the 1.0 API from main)."
     },
     "config": {
         "optimize-autoloader": true,
@@ -108,5 +109,11 @@
         }
     },
     "minimum-stability": "stable",
-    "prefer-stable": true
+    "prefer-stable": true,
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/mmuqiitf/filament-qr-code"
+        }
+    ]
 }
