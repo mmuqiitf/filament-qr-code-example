@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "b63c2dc86371ab7ce8829dd52cd4f025",
+    "content-hash": "48b9ca8cdaefbd5791100dd0d37be969",
     "packages": [
         {
             "name": "anourvalar/eloquent-serialize",
@@ -3636,16 +3636,16 @@
         },
         {
             "name": "mmuqiitf/filament-qr-code",
-            "version": "dev-fix/example-run-issues",
+            "version": "dev-main",
             "source": {
                 "type": "git",
                 "url": "https://github.com/mmuqiitf/filament-qr-code.git",
-                "reference": "eeb1b2ed3d430b2474b30ba0c86395d737295700"
+                "reference": "1ea409b14b3798bf87a486c53dfacd3322eebf5d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/mmuqiitf/filament-qr-code/zipball/eeb1b2ed3d430b2474b30ba0c86395d737295700",
-                "reference": "eeb1b2ed3d430b2474b30ba0c86395d737295700",
+                "url": "https://api.github.com/repos/mmuqiitf/filament-qr-code/zipball/1ea409b14b3798bf87a486c53dfacd3322eebf5d",
+                "reference": "1ea409b14b3798bf87a486c53dfacd3322eebf5d",
                 "shasum": ""
             },
             "require": {
@@ -3672,6 +3672,7 @@
                 "phpstan/phpstan": "^2.0",
                 "phpstan/phpstan-deprecation-rules": "^2.0"
             },
+            "default-branch": true,
             "type": "library",
             "extra": {
                 "laravel": {
@@ -3736,10 +3737,10 @@
                 "sequential-scan"
             ],
             "support": {
-                "source": "https://github.com/mmuqiitf/filament-qr-code/tree/fix/example-run-issues",
+                "source": "https://github.com/mmuqiitf/filament-qr-code/tree/main",
                 "issues": "https://github.com/mmuqiitf/filament-qr-code/issues"
             },
-            "time": "2026-10-27T03:21:35+00:00"
+            "time": "2026-10-27T04:05:58+00:00"
         },
         {
             "name": "monolog/monolog",
