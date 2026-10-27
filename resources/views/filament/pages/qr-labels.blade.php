@@ -1,4 +1,14 @@
 <x-filament-panels::page>
+    {{-- Print only the label sheet: hide the panel chrome, the form and the callout. --}}
+    <style>
+        @media print {
+            .fi-sidebar, .fi-topbar, .fi-header, .fi-callout, .filament-qr-no-print { display: none !important; }
+            .fi-main-ctn, .fi-main, .fi-page { margin: 0 !important; padding: 0 !important; max-width: none !important; }
+            .filament-qr-label-sheet { grid-template-columns: repeat(3, minmax(0, 1fr)) !important; }
+            .filament-qr-label { break-inside: avoid; }
+        }
+    </style>
+
     <div class="space-y-6">
         <x-filament::callout
             icon="heroicon-o-information-circle"

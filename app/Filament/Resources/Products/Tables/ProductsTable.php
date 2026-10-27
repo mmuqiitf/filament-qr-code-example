@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Products\Tables;
 
+use Filament\Actions\ActionGroup;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
@@ -46,7 +47,9 @@ class ProductsTable
                     ->label('Barcode')
                     ->badge()
                     ->color('gray')
-                    ->searchable(),
+                    ->searchable()
+                    // The SKU already identifies the product; keep 1280px screens free of horizontal scroll.
+                    ->visibleFrom('2xl'),
 
                 TextColumn::make('price')
                     ->money('USD')
@@ -60,11 +63,13 @@ class ProductsTable
                 //
             ])
             ->recordActions([
-                DownloadQrAction::make()
-                    ->qrData(fn ($record): string => (string) $record->sku)
-                    ->qrFileName(fn ($record): string => "product-{$record->sku}"),
-                ViewAction::make(),
-                EditAction::make(),
+                ActionGroup::make([
+                    DownloadQrAction::make()
+                        ->qrData(fn ($record): string => (string) $record->sku)
+                        ->qrFileName(fn ($record): string => "product-{$record->sku}"),
+                    ViewAction::make(),
+                    EditAction::make(),
+                ]),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([

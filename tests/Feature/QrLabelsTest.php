@@ -72,3 +72,12 @@ it('rejects an invalid colour instead of rendering black', function () {
         ->call('applyStyle')
         ->assertHasFormErrors(['color']);
 });
+
+it('prints only the label sheet, without the panel chrome', function () {
+    $this->get('/admin/qr-labels')
+        ->assertSuccessful()
+        ->assertSee('@media print', false)
+        ->assertSee('.fi-sidebar', false)
+        ->assertSee('.fi-topbar', false)
+        ->assertSee('grid-template-columns: repeat(3, minmax(0, 1fr))', false);
+});
