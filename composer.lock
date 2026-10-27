@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "48b9ca8cdaefbd5791100dd0d37be969",
+    "content-hash": "9fd636f14f17d0798fae278d402e7a2b",
     "packages": [
         {
             "name": "anourvalar/eloquent-serialize",
@@ -3636,16 +3636,16 @@
         },
         {
             "name": "mmuqiitf/filament-qr-code",
-            "version": "dev-main",
+            "version": "v1.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/mmuqiitf/filament-qr-code.git",
-                "reference": "37ab965a4fa10267bcfe26ab5bda8c8334bd2ad2"
+                "reference": "0ffc3c6f3f31ecbff20d1b50282bb757b2e62552"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/mmuqiitf/filament-qr-code/zipball/37ab965a4fa10267bcfe26ab5bda8c8334bd2ad2",
-                "reference": "37ab965a4fa10267bcfe26ab5bda8c8334bd2ad2",
+                "url": "https://api.github.com/repos/mmuqiitf/filament-qr-code/zipball/0ffc3c6f3f31ecbff20d1b50282bb757b2e62552",
+                "reference": "0ffc3c6f3f31ecbff20d1b50282bb757b2e62552",
                 "shasum": ""
             },
             "require": {
@@ -3672,7 +3672,6 @@
                 "phpstan/phpstan": "^2.0",
                 "phpstan/phpstan-deprecation-rules": "^2.0"
             },
-            "default-branch": true,
             "type": "library",
             "extra": {
                 "laravel": {
@@ -3686,33 +3685,7 @@
                     "Mmuqiitf\\FilamentQrCode\\": "src/"
                 }
             },
-            "autoload-dev": {
-                "psr-4": {
-                    "Mmuqiitf\\FilamentQrCode\\Tests\\": "tests/",
-                    "Workbench\\App\\": "workbench/app/"
-                }
-            },
-            "scripts": {
-                "test": [
-                    "vendor/bin/pest"
-                ],
-                "serve": [
-                    "@php vendor/bin/testbench workbench:build --ansi",
-                    "@php vendor/bin/testbench serve --ansi"
-                ],
-                "analyse": [
-                    "vendor/bin/phpstan analyse"
-                ],
-                "format": [
-                    "vendor/bin/pint"
-                ],
-                "test-style": [
-                    "vendor/bin/pint --test"
-                ],
-                "docs": [
-                    "@php bin/generate-api-docs.php"
-                ]
-            },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
@@ -3737,10 +3710,10 @@
                 "sequential-scan"
             ],
             "support": {
-                "source": "https://github.com/mmuqiitf/filament-qr-code/tree/main",
-                "issues": "https://github.com/mmuqiitf/filament-qr-code/issues"
+                "issues": "https://github.com/mmuqiitf/filament-qr-code/issues",
+                "source": "https://github.com/mmuqiitf/filament-qr-code/tree/v1.0.0"
             },
-            "time": "2026-10-27T05:28:21+00:00"
+            "time": "2026-10-27T05:41:46+00:00"
         },
         {
             "name": "monolog/monolog",
@@ -14316,9 +14289,7 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": {
-        "mmuqiitf/filament-qr-code": 20
-    },
+    "stability-flags": {},
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {

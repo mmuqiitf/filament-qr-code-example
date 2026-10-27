@@ -1,6 +1,6 @@
 # filament-qr-code example app
 
-A Filament v5 panel that shows [mmuqiitf/filament-qr-code](https://github.com/mmuqiitf/filament-qr-code) (`^0.6`) in realistic flows.
+A Filament v5 panel that shows [mmuqiitf/filament-qr-code](https://github.com/mmuqiitf/filament-qr-code) (`^1.0`) in realistic flows.
 
 ## Setup
 
