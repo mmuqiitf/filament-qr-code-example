@@ -25,6 +25,8 @@ it('collects handheld bursts, ignores a repeat and records the count', function 
         ->click('Record count')
         ->wait(1)
         ->assertSee('Aisle A counted')
+        // The collector's own list empties for the next shelf.
+        ->assertScript("document.querySelectorAll('.fi-qr-collector-items .font-mono').length", 0)
         ->assertNoJavaScriptErrors();
 
     expect(StockCount::sole())

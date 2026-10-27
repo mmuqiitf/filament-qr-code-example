@@ -79,7 +79,9 @@ class ShelfAudit extends Page
                     })
                     ->delayBetweenScans(300)
                     ->formats([BarcodeFormat::QrCode, BarcodeFormat::Code128])
-                    ->preferRearCamera(),
+                    ->preferRearCamera()
+                    // The browser keeps its own list: empty it once the count is recorded.
+                    ->extraAttributes(['x-on:shelf-audit-recorded.window' => 'clearAll()']),
             ]);
     }
 
@@ -131,6 +133,7 @@ class ShelfAudit extends Page
             ->send();
 
         $this->form->fill(['location' => $state['location'], 'codes' => []]);
+        $this->dispatch('shelf-audit-recorded');
     }
 
     /**

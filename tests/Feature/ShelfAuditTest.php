@@ -40,7 +40,8 @@ it('records the count with the products not seen on the shelf', function () {
         ->call('submit')
         ->assertHasNoFormErrors()
         ->assertNotified('Aisle A counted')
-        ->assertFormSet(['codes' => []]);
+        ->assertFormSet(['codes' => []])
+        ->assertDispatched('shelf-audit-recorded');
 
     expect(StockCount::sole())
         ->location->toBe('Aisle A')
