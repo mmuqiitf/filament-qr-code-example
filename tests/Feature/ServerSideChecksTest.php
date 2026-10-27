@@ -120,3 +120,26 @@ it('exposes the cooldown and clear-on-reject settings to the browser', function 
     expect($scanner->getScanChecksScanPayload())
         ->toMatchArray(['serverCheck' => true, 'cooldownMs' => 2000, 'clearOnReject' => true]);
 });
+
+it('shows the rejection as an inline field error and clears it on the next accepted scan', function () {
+    $test = Livewire::test(ServerSideChecks::class);
+    $key = skuScannerKey($test);
+
+    $test->call('callSchemaComponentMethod', $key, 'handleScan', ['code' => 'PRD-1007', 'source' => 'hardware'])
+        ->assertHasErrors(['data.sku'])
+        ->assertSee('Rugged Terminal is out of stock.');
+
+    $test->call('callSchemaComponentMethod', $key, 'handleScan', ['code' => 'PRD-1001', 'source' => 'hardware'])
+        ->assertHasNoErrors(['data.sku'])
+        ->assertSet('data.name', 'Wireless Scanner');
+});
+
+it('replaces an earlier inline rejection with the latest reason', function () {
+    $test = Livewire::test(ServerSideChecks::class);
+    $key = skuScannerKey($test);
+
+    $test->call('callSchemaComponentMethod', $key, 'handleScan', ['code' => 'PRD-9999', 'source' => 'hardware']);
+    $test->call('callSchemaComponentMethod', $key, 'handleScan', ['code' => 'PRD-1007', 'source' => 'hardware'])
+        ->assertSee('Rugged Terminal is out of stock.')
+        ->assertDontSee('No record found for');
+});

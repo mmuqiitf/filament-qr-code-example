@@ -6,6 +6,7 @@ use App\Filament\Resources\Products\Pages\ListProducts;
 use App\Filament\Resources\Products\Pages\ViewProduct;
 use App\Models\Product;
 use App\Models\User;
+use Filament\Actions\ActionGroup;
 use Livewire\Livewire;
 use Mmuqiitf\FilamentQrCode\Enums\QrFormat;
 use Mmuqiitf\FilamentQrCode\Tables\Actions\DownloadQrBulkAction;
@@ -90,4 +91,16 @@ it('previews the SKU being edited, not the saved one', function () {
 
     expect($qrImage($editedPreview))->not->toBe('')
         ->and($qrImage($editedPreview))->not->toBe($qrImage($savedPreview));
+});
+
+it('keeps the products table narrow enough for a 1280px screen', function () {
+    $table = Livewire::test(ListProducts::class)->instance()->getTable();
+
+    $actions = $table->getRecordActions();
+    expect($actions)->toHaveCount(1)
+        ->and($actions[0])->toBeInstanceOf(ActionGroup::class)
+        ->and(collect($actions[0]->getActions())->map(fn ($a) => $a->getName())->values()->all())
+        ->toBe(['download_qr', 'view', 'edit']);
+
+    expect($table->getColumn('barcode')->getVisibleFrom())->toBe('2xl');
 });

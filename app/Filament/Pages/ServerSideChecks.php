@@ -66,12 +66,17 @@ class ServerSideChecks extends Page
                                 : "{$record?->name} is out of stock.")
                             // $record receives the lookup result because of its name.
                             ->onScanned(function (?Product $record, Set $set): void {
+                                $this->resetErrorBag('data.sku');
                                 $set('name', $record?->name);
                                 $set('price', $record?->price);
                             })
                             ->onRejected(function (ScanResult $result, Set $set): void {
                                 $set('name', null);
                                 $set('price', null);
+
+                                // Show the reason under the field, as POS does.
+                                $this->resetErrorBag('data.sku');
+                                $this->addError('data.sku', (string) $result->message);
 
                                 Notification::make()
                                     ->title(__('Scan rejected'))

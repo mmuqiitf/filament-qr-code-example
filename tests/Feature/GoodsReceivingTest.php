@@ -133,3 +133,18 @@ it('makes goods receipts from the factory', function () {
 
     expect($receipt->sku)->toBe($receipt->product->sku);
 });
+
+it('drops a rejected serial so the next good serial receives the item', function () {
+    $test = Livewire::test(GoodsReceiving::class);
+
+    receivingScan($test, 'po', 'PO-7001');
+    receivingScan($test, 'sku', 'PRD-1001');
+    receivingScan($test, 'lot', 'LOT-A1');
+    receivingScan($test, 'serials', 'SN-PRD-1001-0001');
+
+    expect(receivingScan($test, 'serials', 'SN-PRD-2002-0001'))->toMatchArray(['passes' => false, 'invalid_step' => 'serials']);
+    $test->assertSet('data.receipt.serials', ['SN-PRD-1001-0001']);
+
+    expect(receivingScan($test, 'serials', 'SN-PRD-1001-0002'))->toMatchArray(['completed' => true, 'submitted' => true]);
+    expect(GoodsReceipt::sole()->serials)->toBe(['SN-PRD-1001-0001', 'SN-PRD-1001-0002']);
+});
