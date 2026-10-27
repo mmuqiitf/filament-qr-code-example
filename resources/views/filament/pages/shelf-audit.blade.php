@@ -1,6 +1,6 @@
 <x-filament-panels::page>
-    {{-- QrCollector reports each new code through the documented window event; forward it to the lookup. --}}
-    <div class="space-y-6" x-data x-on:qr-collector-item-added.window="$wire.handleCollectorScan($event.detail.code)">
+    {{-- QrCollector calls handleCollectorScan() on this page for each new code. --}}
+    <div class="space-y-6">
         <x-filament::callout
             icon="heroicon-o-information-circle"
             color="info"
