@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "9fd636f14f17d0798fae278d402e7a2b",
+    "content-hash": "4d9f87f30da3c7b12493e7dc87cd4a42",
     "packages": [
         {
             "name": "anourvalar/eloquent-serialize",
@@ -3636,16 +3636,16 @@
         },
         {
             "name": "mmuqiitf/filament-qr-code",
-            "version": "v1.0.0",
+            "version": "v1.0.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/mmuqiitf/filament-qr-code.git",
-                "reference": "0ffc3c6f3f31ecbff20d1b50282bb757b2e62552"
+                "reference": "d5f9be14fbd5ec6a1e210de25ee82ee5db3e4cab"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/mmuqiitf/filament-qr-code/zipball/0ffc3c6f3f31ecbff20d1b50282bb757b2e62552",
-                "reference": "0ffc3c6f3f31ecbff20d1b50282bb757b2e62552",
+                "url": "https://api.github.com/repos/mmuqiitf/filament-qr-code/zipball/d5f9be14fbd5ec6a1e210de25ee82ee5db3e4cab",
+                "reference": "d5f9be14fbd5ec6a1e210de25ee82ee5db3e4cab",
                 "shasum": ""
             },
             "require": {
@@ -3656,7 +3656,7 @@
                 "filament/infolists": "^5.0",
                 "filament/support": "^5.0",
                 "filament/tables": "^5.0",
-                "illuminate/contracts": "^11.0|^12.0|^13.0",
+                "illuminate/contracts": "^12.0|^13.0",
                 "php": "^8.2",
                 "spatie/laravel-package-tools": "^1.16"
             },
@@ -3665,7 +3665,7 @@
                 "laravel/pint": "^1.30",
                 "mockery/mockery": "^1.6.10",
                 "nikic/php-parser": "^5.0",
-                "orchestra/testbench": "^9.0|^10.0|^11.0",
+                "orchestra/testbench": "^10.0|^11.0",
                 "pestphp/pest": "^3.0|^4.0",
                 "pestphp/pest-plugin-laravel": "^3.0|^4.0",
                 "phpstan/extension-installer": "^1.3",
@@ -3711,9 +3711,9 @@
             ],
             "support": {
                 "issues": "https://github.com/mmuqiitf/filament-qr-code/issues",
-                "source": "https://github.com/mmuqiitf/filament-qr-code/tree/v1.0.0"
+                "source": "https://github.com/mmuqiitf/filament-qr-code/tree/v1.0.1"
             },
-            "time": "2026-10-27T05:41:46+00:00"
+            "time": "2026-10-29T13:59:38+00:00"
         },
         {
             "name": "monolog/monolog",
