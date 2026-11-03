@@ -105,10 +105,17 @@ it('keeps the products table narrow enough for a 1280px screen', function () {
     expect($table->getColumn('barcode')->getVisibleFrom())->toBe('2xl');
 });
 
-it('shows the product barcode as a Code 128 image on the view page', function () {
-    $product = Product::factory()->create(['sku' => 'PRD-7777', 'barcode' => '8901234567891']);
+it('shows a valid product barcode as EAN-13 on the view page', function () {
+    $product = Product::factory()->create(['sku' => 'PRD-7777', 'barcode' => '8901234567012']);
 
     Livewire::test(ViewProduct::class, ['record' => $product->getKey()])
-        ->assertSeeHtml('alt="Code 128 barcode: 8901234567891"')
+        ->assertSeeHtml('alt="EAN-13 barcode: 8901234567012"')
         ->assertSeeHtml('download="barcode.svg"');
+});
+
+it('falls back to Code 128 for a product barcode that is not a valid EAN-13', function () {
+    $product = Product::factory()->create(['sku' => 'PRD-7778', 'barcode' => '8901234567891']);
+
+    Livewire::test(ViewProduct::class, ['record' => $product->getKey()])
+        ->assertSeeHtml('alt="Code 128 barcode: 8901234567891"');
 });

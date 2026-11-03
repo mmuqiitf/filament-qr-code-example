@@ -3,6 +3,7 @@
 namespace App\Filament\Pages;
 
 use App\Models\Product;
+use App\Support\ProductBarcodeType;
 use BackedEnum;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
@@ -18,7 +19,7 @@ use Mmuqiitf\FilamentQrCode\Forms\Components\BarcodeDisplay;
 /**
  * The package's 1D barcode components: one sample per symbology, a try-it
  * field that shows the inline error for an invalid value, and the product
- * barcodes as Code 128 labels.
+ * barcodes as EAN-13 labels (Code 128 for other values).
  *
  * @property Schema $form
  */
@@ -106,14 +107,14 @@ class BarcodeShowcase extends Page
                     ]),
 
                 Section::make('Product barcodes')
-                    ->description('Stored product barcodes rendered as Code 128, which accepts any printable ASCII value.')
+                    ->description('Stored product barcodes as EAN-13. Values that are not valid EAN-13 fall back to Code 128.')
                     ->schema([
                         Grid::make(['default' => 1, 'md' => 2, 'xl' => 3])->schema(
                             fn (): array => Product::query()->orderBy('sku')->get()
                                 ->filter(fn (Product $product): bool => filled($product->barcode))
                                 ->map(fn (Product $product): BarcodeDisplay => BarcodeDisplay::make("product_{$product->getKey()}")
                                     ->label($product->name)
-                                    ->type(BarcodeType::Code128)
+                                    ->type(ProductBarcodeType::for($product->barcode))
                                     ->data($product->barcode)
                                     ->format(fn (): string => $this->format())
                                     ->dehydrated(false))

@@ -49,10 +49,12 @@ it('renders a valid try-it value', function () {
         ->assertDontSeeHtml('data-qr-part="barcode.error"');
 });
 
-it('shows every product barcode as a Code 128 label', function () {
-    Product::factory()->create(['sku' => 'PRD-1001', 'barcode' => '8901234567891', 'name' => 'Wireless Scanner']);
+it('shows product barcodes as EAN-13, falling back to Code 128 for other values', function () {
+    Product::factory()->create(['sku' => 'PRD-1001', 'barcode' => '8901234567005', 'name' => 'Wireless Scanner']);
+    Product::factory()->create(['sku' => 'PRD-1002', 'barcode' => 'INT-0042', 'name' => 'Internal Part']);
 
     Livewire::test(BarcodeShowcase::class)
         ->assertSee('Wireless Scanner')
-        ->assertSeeHtml('alt="Code 128 barcode: 8901234567891"');
+        ->assertSeeHtml('alt="EAN-13 barcode: 8901234567005"')
+        ->assertSeeHtml('alt="Code 128 barcode: INT-0042"');
 });

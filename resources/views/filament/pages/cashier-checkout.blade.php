@@ -48,7 +48,7 @@
                                 wire:model="scanInput"
                                 wire:keydown.enter="handleManualScan"
                                 autofocus
-                                placeholder="Scan SKU (e.g. PRD-1001) or Barcode (e.g. 8901234567890)..."
+                                placeholder="Scan SKU (e.g. PRD-1001) or Barcode (e.g. 8901234567005)..."
                             />
                         </x-filament::input.wrapper>
 
@@ -72,8 +72,8 @@
                             <x-filament::button size="xs" color="gray" wire:click="scanProduct('PRD-1003')">
                                 PRD-1003 (USB Hub)
                             </x-filament::button>
-                            <x-filament::button size="xs" color="gray" wire:click="scanProduct('8901234567893')">
-                                8901234567893 (Headphones)
+                            <x-filament::button size="xs" color="gray" wire:click="scanProduct('8901234567036')">
+                                8901234567036 (Headphones)
                             </x-filament::button>
                         </div>
                     </div>

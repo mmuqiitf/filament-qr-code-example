@@ -6,7 +6,7 @@ use App\Models\User;
 beforeEach(function () {
     $this->user = User::factory()->create();
 
-    Product::factory()->create(['sku' => 'PRD-1001', 'barcode' => '8901234567891', 'name' => 'Wireless Scanner']);
+    Product::factory()->create(['sku' => 'PRD-1001', 'barcode' => '8901234567005', 'name' => 'Wireless Scanner']);
 });
 
 it('renders a barcode for every symbology and the product barcodes', function () {
@@ -16,7 +16,7 @@ it('renders a barcode for every symbology and the product barcodes', function ()
         ->assertSee('Barcode Showcase')
         ->assertPresent('img[alt="EAN-13 barcode: 5901234123457"]')
         ->assertPresent('img[alt="ITF-14 barcode: 15400141288763"]')
-        ->assertPresent('img[alt="Code 128 barcode: 8901234567891"]')
+        ->assertPresent('img[alt="EAN-13 barcode: 8901234567005"]')
         ->assertPresent('a[download="barcode.svg"]')
         ->assertNoJavaScriptErrors();
 });
