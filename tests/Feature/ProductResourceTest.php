@@ -104,3 +104,11 @@ it('keeps the products table narrow enough for a 1280px screen', function () {
 
     expect($table->getColumn('barcode')->getVisibleFrom())->toBe('2xl');
 });
+
+it('shows the product barcode as a Code 128 image on the view page', function () {
+    $product = Product::factory()->create(['sku' => 'PRD-7777', 'barcode' => '8901234567891']);
+
+    Livewire::test(ViewProduct::class, ['record' => $product->getKey()])
+        ->assertSeeHtml('alt="Code 128 barcode: 8901234567891"')
+        ->assertSeeHtml('download="barcode.svg"');
+});

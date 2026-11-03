@@ -23,6 +23,7 @@ composer dev          # serve on http://localhost:8000/admin
 | Manufacturing | `/admin/manufacturing` | Work-order station: every extension point (see below) |
 | Interactive QR Customizer | `/admin/qr-customizer` | Generating and styling QR codes |
 | QR Labels | `/admin/qr-labels` | Printable label sheets for the demo codes, built on the generator API |
+| Barcode Showcase | `/admin/barcode-showcase` | 1D barcodes (Code 128, EAN-13, EAN-8, UPC-A, Code 39, ITF-14) with `BarcodeDisplay`, inline errors for invalid values (needs filament-qr-code 1.1) |
 
 ### POS Checkout
 
