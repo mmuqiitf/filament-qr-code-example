@@ -37,6 +37,7 @@ it('serves every package-backed admin page and its package assets', function (st
     '/admin/work-order-sequence',
     '/admin/cashier-checkout',
     '/admin/qr-customizer',
+    '/admin/barcode-showcase',
     '/admin/products',
     '/admin/products/create',
 ]);

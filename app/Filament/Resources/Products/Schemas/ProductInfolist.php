@@ -2,8 +2,11 @@
 
 namespace App\Filament\Resources\Products\Schemas;
 
+use App\Support\ProductBarcodeType;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Schemas\Schema;
+use Mmuqiitf\FilamentQrCode\Enums\BarcodeType;
+use Mmuqiitf\FilamentQrCode\Infolists\Components\BarcodeEntry;
 use Mmuqiitf\FilamentQrCode\Infolists\Components\QrEntry;
 
 class ProductInfolist
@@ -37,6 +40,13 @@ class ProductInfolist
                     ->size(200)
                     ->caption('Scan to verify authenticity')
                     ->downloadable(true)
+                    ->columnSpanFull(),
+
+                // EAN-13 for retail codes, Code 128 for anything else.
+                BarcodeEntry::make('barcode_image')
+                    ->label('Product Barcode')
+                    ->data(fn ($record): ?string => $record->barcode)
+                    ->type(fn ($record): BarcodeType => ProductBarcodeType::for($record->barcode))
                     ->columnSpanFull(),
             ]);
     }

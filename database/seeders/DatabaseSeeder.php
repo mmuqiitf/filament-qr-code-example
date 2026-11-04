@@ -29,7 +29,7 @@ class DatabaseSeeder extends Seeder
             [
                 'name' => 'Ergonomic Wireless Mouse',
                 'sku' => 'PRD-1001',
-                'barcode' => '8901234567890',
+                'barcode' => '8901234567005',
                 'price' => 39.99,
                 'stock' => 50,
                 'description' => 'Rechargeable 2.4G ergonomic vertical mouse with silent switches.',
@@ -37,7 +37,7 @@ class DatabaseSeeder extends Seeder
             [
                 'name' => 'Mechanical Gaming Keyboard',
                 'sku' => 'PRD-1002',
-                'barcode' => '8901234567891',
+                'barcode' => '8901234567012',
                 'price' => 89.50,
                 'stock' => 35,
                 'description' => 'RGB backlit mechanical keyboard with hot-swappable brown switches.',
@@ -45,7 +45,7 @@ class DatabaseSeeder extends Seeder
             [
                 'name' => 'USB-C Fast Charging Hub (7-in-1)',
                 'sku' => 'PRD-1003',
-                'barcode' => '8901234567892',
+                'barcode' => '8901234567029',
                 'price' => 49.00,
                 'stock' => 100,
                 'description' => 'Multiport adapter with 4K HDMI, 100W Power Delivery, and SD reader.',
@@ -53,7 +53,7 @@ class DatabaseSeeder extends Seeder
             [
                 'name' => 'Noise-Cancelling Over-Ear Headphones',
                 'sku' => 'PRD-1004',
-                'barcode' => '8901234567893',
+                'barcode' => '8901234567036',
                 'price' => 129.99,
                 'stock' => 20,
                 'description' => 'Active noise cancellation with 40-hour battery life.',
@@ -61,7 +61,7 @@ class DatabaseSeeder extends Seeder
             [
                 'name' => 'Thermal Shipping Label Printer',
                 'sku' => 'PRD-1005',
-                'barcode' => '8901234567894',
+                'barcode' => '8901234567043',
                 'price' => 149.00,
                 'stock' => 15,
                 'description' => 'High-speed 4x6 commercial direct thermal barcode printer.',
@@ -69,7 +69,7 @@ class DatabaseSeeder extends Seeder
             [
                 'name' => 'Ultra-Wide 34-Inch Curved Monitor',
                 'sku' => 'PRD-1006',
-                'barcode' => '8901234567895',
+                'barcode' => '8901234567050',
                 'price' => 499.00,
                 'stock' => 8,
                 'description' => 'WQHD 144Hz HDR curved gaming and productivity display.',
@@ -77,7 +77,7 @@ class DatabaseSeeder extends Seeder
             [
                 'name' => 'Rugged Mobile Data Terminal',
                 'sku' => 'PRD-1007',
-                'barcode' => '8901234567896',
+                'barcode' => '8901234567067',
                 'price' => 899.00,
                 'stock' => 0,
                 'description' => 'Out-of-stock Android handheld, used by the server-side checks demo.',
