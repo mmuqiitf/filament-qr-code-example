@@ -10,6 +10,7 @@ use Filament\Actions\ActionGroup;
 use Livewire\Livewire;
 use Mmuqiitf\FilamentQrCode\Enums\QrFormat;
 use Mmuqiitf\FilamentQrCode\Tables\Actions\DownloadQrBulkAction;
+use Mmuqiitf\FilamentQrCode\Tables\Columns\BarcodeColumn;
 
 beforeEach(function () {
     $this->actingAs(User::factory()->create());
@@ -102,7 +103,19 @@ it('keeps the products table narrow enough for a 1280px screen', function () {
         ->and(collect($actions[0]->getActions())->map(fn ($a) => $a->getName())->values()->all())
         ->toBe(['download_qr', 'view', 'edit']);
 
-    expect($table->getColumn('barcode')->getVisibleFrom())->toBe('2xl');
+    expect($table->getColumn('barcode'))->toBeInstanceOf(BarcodeColumn::class);
+});
+
+it('shows product barcodes on the list as EAN-13, falling back to Code 128', function () {
+    Product::factory()->create(['sku' => 'PRD-7781', 'barcode' => '8901234567012']);
+    Product::factory()->create(['sku' => 'PRD-7782', 'barcode' => 'INT-0042']);
+
+    Livewire::test(ListProducts::class)
+        ->assertSeeHtml('alt="EAN-13 barcode: 8901234567012"')
+        ->assertSeeHtml('alt="Code 128 barcode: INT-0042"')
+        ->searchTable('8901234567012')
+        ->assertSeeHtml('alt="EAN-13 barcode: 8901234567012"')
+        ->assertDontSeeHtml('alt="Code 128 barcode: INT-0042"');
 });
 
 it('shows a valid product barcode as EAN-13 on the view page', function () {

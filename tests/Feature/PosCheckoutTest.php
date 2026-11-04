@@ -55,6 +55,15 @@ it('merges the same SKU into one line with quantity 2', function () {
     $test->assertSee('339.00');
 });
 
+it('adds a product by its EAN-13 barcode as well as its SKU', function () {
+    Product::factory()->create(['sku' => 'PRD-2001', 'name' => 'Barcode Mouse', 'price' => 10, 'barcode' => '8901234567005']);
+    $test = Livewire::test(PosCheckout::class);
+
+    posScan($test, '8901234567005')->assertReturned(fn (array $result): bool => $result['passes'] === true);
+
+    expect(array_keys($test->get('cart')))->toBe(['PRD-2001']);
+});
+
 it('rejects an unknown SKU and leaves the cart alone', function () {
     $test = Livewire::test(PosCheckout::class);
 

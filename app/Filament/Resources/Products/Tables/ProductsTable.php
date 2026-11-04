@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Products\Tables;
 
+use App\Support\ProductBarcodeType;
 use Filament\Actions\ActionGroup;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
@@ -9,9 +10,11 @@ use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use Mmuqiitf\FilamentQrCode\Enums\BarcodeType;
 use Mmuqiitf\FilamentQrCode\Enums\QrFormat;
 use Mmuqiitf\FilamentQrCode\Tables\Actions\DownloadQrAction;
 use Mmuqiitf\FilamentQrCode\Tables\Actions\DownloadQrBulkAction;
+use Mmuqiitf\FilamentQrCode\Tables\Columns\BarcodeColumn;
 use Mmuqiitf\FilamentQrCode\Tables\Columns\QrColumn;
 
 class ProductsTable
@@ -43,13 +46,14 @@ class ProductsTable
                     ->sortable()
                     ->weight('bold'),
 
-                TextColumn::make('barcode')
+                BarcodeColumn::make('barcode')
                     ->label('Barcode')
-                    ->badge()
-                    ->color('gray')
-                    ->searchable()
-                    // The SKU already identifies the product; keep 1280px screens free of horizontal scroll.
-                    ->visibleFrom('2xl'),
+                    ->data(fn ($record): ?string => $record->barcode)
+                    // Retail EAN-13, or Code 128 for internal codes and bad check digits.
+                    ->type(fn ($record): BarcodeType => ProductBarcodeType::for($record->barcode))
+                    ->barWidth(1)
+                    ->height(28)
+                    ->searchable(),
 
                 TextColumn::make('price')
                     ->money('USD')
