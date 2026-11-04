@@ -81,6 +81,8 @@ class PosCheckout extends Page
                     // Handhelds set up for lower case still match: cleaned in the browser and on the server.
                     ->normalizeWith(uppercase: true)
                     ->lookup(Product::class, 'sku')
+                    // Retail barcodes (EAN-13) on the packaging find the product too.
+                    ->lookupUsing(fn (string $code): ?Product => Product::query()->where('barcode', $code)->first(), fallback: true)
                     ->onScanned(fn (Product $record) => $this->addToCart($record))
                     ->continuousDisplay(fn (): ContinuousDisplay => $this->keepLastCode ? ContinuousDisplay::LastCode : ContinuousDisplay::Empty)
                     ->pauseOnReject(fn (): bool => $this->pauseOnReject)

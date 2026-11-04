@@ -62,3 +62,11 @@ it('defaults every select to one of its options', function () {
         ->and(['L', 'M', 'Q', 'H'])->toContain($component->get('data.errorCorrection'))
         ->and(['svg', 'png'])->toContain($component->get('data.format'));
 });
+
+it('shows a validation message on the colour fields for an invalid colour', function (string $field) {
+    Livewire::test(QrCustomizer::class)
+        ->set("data.{$field}", 'not-a-colour')
+        ->assertHasErrors(["data.{$field}"])
+        ->set("data.{$field}", '#123abc')
+        ->assertHasNoErrors(["data.{$field}"]);
+})->with(['color', 'backgroundColor']);

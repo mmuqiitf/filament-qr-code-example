@@ -70,11 +70,19 @@ class QrCustomizer extends Page
                             ->schema([
                                 ColorPicker::make('color')
                                     ->label('Foreground Color')
-                                    ->live(debounce: 200),
+                                    ->hex()
+                                    ->rule('hex_color')
+                                    ->live(debounce: 200)
+                                    // Validate as you type so a bad value is explained, not silently ignored.
+                                    ->afterStateUpdated(fn (QrCustomizer $livewire, ColorPicker $component) => $livewire->validateOnly($component->getStatePath())),
 
                                 ColorPicker::make('backgroundColor')
                                     ->label('Background Color')
-                                    ->live(debounce: 200),
+                                    ->hex()
+                                    ->rule('hex_color')
+                                    ->live(debounce: 200)
+                                    // Validate as you type so a bad value is explained, not silently ignored.
+                                    ->afterStateUpdated(fn (QrCustomizer $livewire, ColorPicker $component) => $livewire->validateOnly($component->getStatePath())),
 
                                 Select::make('format')
                                     ->label('Render Format')
