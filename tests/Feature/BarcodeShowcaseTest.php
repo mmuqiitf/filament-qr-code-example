@@ -19,7 +19,7 @@ it('serves the page at /admin/barcode-showcase under the barcodeShowcase route n
 it('renders one sample barcode for every supported symbology', function () {
     $component = Livewire::test(BarcodeShowcase::class);
 
-    foreach (['Code 128', 'EAN-13', 'EAN-8', 'UPC-A', 'Code 39', 'ITF-14'] as $label) {
+    foreach (['Code 128', 'EAN-13', 'EAN-8', 'UPC-A', 'Code 39', 'ITF-14', 'GS1-128'] as $label) {
         $component->assertSee($label);
     }
 
