@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "e83ba5017c6faae8b87ee680db6ab845",
+    "content-hash": "7636bc4693422f918951318a3913cddf",
     "packages": [
         {
             "name": "anourvalar/eloquent-serialize",
@@ -3641,16 +3641,16 @@
         },
         {
             "name": "mmuqiitf/filament-qr-code",
-            "version": "v1.1.1",
+            "version": "dev-main",
             "source": {
                 "type": "git",
                 "url": "https://github.com/mmuqiitf/filament-qr-code.git",
-                "reference": "8c19d96c4e4b464f5f733cd8451086cf747b4bf9"
+                "reference": "4230995017ddb5b1b99eed8edf0ada7e52930987"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/mmuqiitf/filament-qr-code/zipball/8c19d96c4e4b464f5f733cd8451086cf747b4bf9",
-                "reference": "8c19d96c4e4b464f5f733cd8451086cf747b4bf9",
+                "url": "https://api.github.com/repos/mmuqiitf/filament-qr-code/zipball/4230995017ddb5b1b99eed8edf0ada7e52930987",
+                "reference": "4230995017ddb5b1b99eed8edf0ada7e52930987",
                 "shasum": ""
             },
             "require": {
@@ -3678,6 +3678,7 @@
                 "phpstan/phpstan": "^2.0",
                 "phpstan/phpstan-deprecation-rules": "^2.0"
             },
+            "default-branch": true,
             "type": "library",
             "extra": {
                 "laravel": {
@@ -3697,8 +3698,8 @@
             ],
             "authors": [
                 {
-                    "name": "Muhammad Muqiit Faturrahman",
-                    "email": "muqiitf@gmail.com",
+                    "name": "Mohamad Muqiit Faturrahman",
+                    "email": "mmuqiit.f14@gmail.com",
                     "role": "Developer"
                 }
             ],
@@ -3718,9 +3719,9 @@
             ],
             "support": {
                 "issues": "https://github.com/mmuqiitf/filament-qr-code/issues",
-                "source": "https://github.com/mmuqiitf/filament-qr-code/tree/v1.1.1"
+                "source": "https://github.com/mmuqiitf/filament-qr-code/tree/main"
             },
-            "time": "2026-11-04T09:43:35+00:00"
+            "time": "2026-11-09T23:20:31+00:00"
         },
         {
             "name": "monolog/monolog",
@@ -14553,9 +14554,18 @@
             "time": "2026-10-05T23:14:19+00:00"
         }
     ],
-    "aliases": [],
+    "aliases": [
+        {
+            "package": "mmuqiitf/filament-qr-code",
+            "version": "dev-main",
+            "alias": "1.2.0",
+            "alias_normalized": "1.2.0.0"
+        }
+    ],
     "minimum-stability": "stable",
-    "stability-flags": {},
+    "stability-flags": {
+        "mmuqiitf/filament-qr-code": 20
+    },
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
