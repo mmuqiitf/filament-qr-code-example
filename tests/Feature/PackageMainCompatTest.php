@@ -38,6 +38,8 @@ it('serves every package-backed admin page and its package assets', function (st
     '/admin/cashier-checkout',
     '/admin/qr-customizer',
     '/admin/barcode-showcase',
+    '/admin/gs1-receiving',
+    '/admin/gs1-labels',
     '/admin/products',
     '/admin/products/create',
 ]);

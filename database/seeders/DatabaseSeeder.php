@@ -4,9 +4,12 @@ namespace Database\Seeders;
 
 use App\Models\AssemblyOrder;
 use App\Models\Product;
+use App\Models\ReceivedLine;
 use App\Models\User;
+use App\Support\Gs1SampleLabels;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Mmuqiitf\FilamentQrCode\Gs1\Gs1;
 
 class DatabaseSeeder extends Seeder
 {
@@ -82,6 +85,30 @@ class DatabaseSeeder extends Seeder
                 'stock' => 0,
                 'description' => 'Out-of-stock Android handheld, used by the server-side checks demo.',
             ],
+            [
+                'name' => 'Direct Thermal Label Rolls 4x6 (case)',
+                'sku' => 'PRD-1008',
+                'barcode' => substr(Gs1SampleLabels::LABEL_ROLLS_GTIN, 1),
+                'price' => 64.00,
+                'stock' => 40,
+                'description' => 'Case of 12 rolls of 500 labels. Thermal paper has a shelf life, so cases carry a best-before date (GS1 Receiving).',
+            ],
+            [
+                'name' => 'Scanner Battery Pack 3200 mAh',
+                'sku' => 'PRD-1009',
+                'barcode' => substr(Gs1SampleLabels::BATTERY_PACK_GTIN, 1),
+                'price' => 45.00,
+                'stock' => 60,
+                'description' => 'Serialised Li-ion pack for handheld scanners, received by serial and expiry (GS1 Receiving).',
+            ],
+            [
+                'name' => 'Screen Cleaning Wipes (pallet)',
+                'sku' => 'PRD-1010',
+                'barcode' => substr(Gs1SampleLabels::WIPES_GTIN, 1),
+                'price' => 310.00,
+                'stock' => 4,
+                'description' => 'Weighed pallet of alcohol wipes; the label carries the net weight (GS1 Receiving).',
+            ],
         ];
 
         foreach ($demoProducts as $productData) {
@@ -92,6 +119,7 @@ class DatabaseSeeder extends Seeder
         }
 
         $this->seedAssemblyOrders();
+        $this->seedReceivedLines();
     }
 
     /**
@@ -111,6 +139,33 @@ class DatabaseSeeder extends Seeder
             foreach ($data['bom'] as $sku => $quantity) {
                 $order->bomLines()->firstOrCreate(['component_sku' => $sku], ['quantity' => $quantity]);
             }
+        }
+    }
+
+    /**
+     * Lines already received on the GS1 Receiving page, one per valid sample
+     * label. Dates come from the samples, so they are relative to today.
+     */
+    private function seedReceivedLines(): void
+    {
+        foreach (Gs1SampleLabels::valid() as $sample) {
+            $label = Gs1::parse($sample['value']);
+            $product = Product::forGtin($label->get('01'));
+
+            if ($product === null || ReceivedLine::query()->where('label', $label->bracketed())->exists()) {
+                continue;
+            }
+
+            ReceivedLine::create([
+                'product_id' => $product->getKey(),
+                'label' => $label->bracketed(),
+                'gtin' => $label->get('01'),
+                'batch' => $label->get('10'),
+                'serial' => $label->get('21'),
+                'expires_at' => $label->date('17')?->toDateString(),
+                'net_weight_kg' => $label->decimal('3103'),
+                'quantity' => (int) ($label->get('30') ?? 1),
+            ]);
         }
     }
 }
