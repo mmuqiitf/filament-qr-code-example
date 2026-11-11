@@ -1,5 +1,6 @@
 <?php
 
+use App\Filament\Pages\Gs1Labels;
 use App\Filament\Pages\Gs1Receiving;
 use App\Models\Product;
 use App\Models\ReceivedLine;
@@ -37,6 +38,12 @@ it('serves the page at /admin/gs1-receiving under the gs1Receiving route name', 
         ->and(Gs1Receiving::getRouteName())->toBe('filament.admin.pages.gs1Receiving');
 
     $this->get(Gs1Receiving::getUrl())->assertSuccessful()->assertSee('GS1 Receiving');
+});
+
+it('explains the page and links to the GS1 sample labels', function () {
+    $this->get(Gs1Receiving::getUrl())
+        ->assertSee('A valid label fills the line')
+        ->assertSee('href="'.Gs1Labels::getUrl().'"', escape: false);
 });
 
 it('fills the line from a raw gun scan and stores the bracketed label', function () {

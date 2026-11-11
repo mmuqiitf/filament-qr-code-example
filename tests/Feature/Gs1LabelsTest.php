@@ -21,6 +21,12 @@ it('serves the page at /admin/gs1-labels under the gs1Labels route name', functi
     $this->get(Gs1Labels::getUrl())->assertSuccessful()->assertSee('GS1 Labels');
 });
 
+it('explains the page and links to GS1 Receiving', function () {
+    $this->get(Gs1Labels::getUrl())
+        ->assertSee('Dates are relative to today, so the valid labels never expire.')
+        ->assertSee('href="'.Gs1Receiving::getUrl().'"', escape: false);
+});
+
 it('draws every GS1-128 sample with its bracketed text', function () {
     $test = Livewire::test(Gs1Labels::class);
 

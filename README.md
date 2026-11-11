@@ -80,6 +80,8 @@ composer test                       # Pint, PHPStan and Pest
 vendor/bin/pest tests/Browser       # Playwright browser tests (npx playwright install chromium first)
 ```
 
+`tests/Browser/Gs1AccessibilityTest.php` runs axe-core (bundled with `pestphp/pest-plugin-browser`, so no extra dependency) against the GS1 Labels and GS1 Receiving pages through `assertNoAccessibilityIssues(level: 3)`, which reports every impact from critical to minor. A leftover `public/hot` from an old `npm run dev` stops the built CSS from loading, and the contrast checks then judge an unstyled page, so delete it before browser runs.
+
 Browser runs can leave a `playwright run-server` process behind; kill it if your terminal waits after Pest exits.
 
 The nightly `package-main` workflow runs this app against `mmuqiitf/filament-qr-code:dev-main` so package regressions show up before a release.
