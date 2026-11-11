@@ -12,6 +12,7 @@ use Filament\Pages\Page;
 use Filament\Panel;
 use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
@@ -24,7 +25,6 @@ use Mmuqiitf\FilamentQrCode\Enums\BarcodeType;
 use Mmuqiitf\FilamentQrCode\Enums\HardwareInputScope;
 use Mmuqiitf\FilamentQrCode\Forms\Components\QrScanner;
 use Mmuqiitf\FilamentQrCode\Gs1\Gs1;
-use Mmuqiitf\FilamentQrCode\Support\ScanResult;
 use Mmuqiitf\FilamentQrCode\Tables\Columns\BarcodeColumn;
 
 /**
@@ -92,8 +92,8 @@ class Gs1Receiving extends Page implements HasTable
                     ->schema([
                         QrScanner::make('label')
                             ->label('GS1 label')
-                            // A closure: PHP turns keys like '10' into ints, which gs1()'s array<string, string> PHPDoc refuses.
-                            ->gs1(fill: fn (): array => self::FILL, require: ['01', '17'])
+                            // Fills these fields and empties the ones a label does not carry.
+                            ->gs1(fill: self::FILL, require: ['01', '17'])
                             // Later checks see the bracketed string, so parse it again for the AIs.
                             ->validateUsing(function (string $code): ?string {
                                 $expiry = Gs1::parse($code)->date('17');
@@ -110,11 +110,11 @@ class Gs1Receiving extends Page implements HasTable
                                     : null;
                             })
                             // Runs for scans and pasted labels, after the package's GS1 fill.
-                            ->afterStateUpdated(fn (?string $state, Set $set) => $this->syncLine($state, $set))
-                            ->onRejected(function (ScanResult $result, Set $set): void {
-                                $this->syncLine(null, $set);
-                                $this->addError('data.label', (string) $result->message);
-                            })
+                            ->afterStateUpdated(fn (?string $state, Get $get, Set $set) => $this->showProduct($state, $get, $set))
+                            // The package shows the reason under the field and leaves the
+                            // mapped fields as they were; a rejected label must not leave
+                            // an earlier label's line behind.
+                            ->onRejected(fn (Set $set) => $this->clearLine($set))
                             ->hardwareInput(scope: HardwareInputScope::Page)
                             ->formats([BarcodeFormat::Code128, BarcodeFormat::DataMatrix, BarcodeFormat::QrCode])
                             ->beep(success: true, error: true)
@@ -157,24 +157,25 @@ class Gs1Receiving extends Page implements HasTable
     }
 
     /**
-     * Keep the line in step with the label: the package fills the AIs a label
-     * carries and leaves the others as they were, so clear the fields this
-     * label does not carry (nothing from an earlier label may be received
-     * with it) and show the product. A null label clears the whole line.
+     * Show the product for the label's GTIN. A label without AI (30) leaves
+     * the count empty, so fall back to one.
      */
-    protected function syncLine(?string $label, Set $set): void
+    protected function showProduct(?string $label, Get $get, Set $set): void
     {
-        $this->resetErrorBag('data.label');
+        $set('product', filled($label) ? Product::forGtin(Gs1::parse($label)->get('01'))?->name : null);
 
-        $elements = filled($label) ? Gs1::parse($label) : null;
+        if (blank($get('quantity'))) {
+            $set('quantity', 1);
+        }
+    }
 
-        foreach (self::FILL as $ai => $field) {
-            if ($elements?->get((string) $ai) === null) {
-                $set($field, $field === 'quantity' ? 1 : null);
-            }
+    protected function clearLine(Set $set): void
+    {
+        foreach (self::FILL as $field) {
+            $set($field, $field === 'quantity' ? 1 : null);
         }
 
-        $set('product', Product::forGtin($elements?->get('01'))?->name);
+        $set('product', null);
     }
 
     public function table(Table $table): Table

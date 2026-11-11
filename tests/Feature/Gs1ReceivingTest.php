@@ -90,6 +90,50 @@ it('clears the line when a pasted label is not valid GS1', function () {
         ->assertSet('data.product', null);
 });
 
+it('shows a typed label\'s rejection under the field, once', function () {
+    $test = Livewire::test(Gs1Receiving::class)
+        ->set('data.label', '8901234567074')
+        ->set('data.label', '(01)08901234567075(17)271110')
+        ->assertSet('data.label', null)
+        ->assertHasErrors(['data.label'])
+        ->assertSee('Invalid check digit in AI (01)')
+        ->assertDontSee('Plain product barcode, not a GS1 label');
+
+    expect($test->errors()->get('data.label'))->toBe(['Invalid check digit in AI (01)']);
+});
+
+it('runs the page checks on a typed label too', function () {
+    Livewire::test(Gs1Receiving::class)
+        ->set('data.label', '(01)08901234567074(17)261109(10)LOT-OLD')
+        ->assertSet('data.gtin', null)
+        ->assertSee('Expired on 2026-11-09. Quarantine the stock instead of receiving it.');
+});
+
+it('empties fields an earlier pasted label filled when the next one does not carry them', function () {
+    Livewire::test(Gs1Receiving::class)
+        ->set('data.label', '(01)08901234567074(17)271100(10)LOT-2611A(3103)012500(30)12')
+        ->assertSet('data.quantity', '12')
+        ->set('data.label', '(01)08901234567074(17)271110(21)SN-0042')
+        ->assertSet('data.serial', 'SN-0042')
+        ->assertSet('data.batch', null)
+        ->assertSet('data.net_weight_kg', null)
+        ->assertSet('data.quantity', 1);
+});
+
+it('clears the line when a scan is rejected after an accepted one', function () {
+    $test = Livewire::test(Gs1Receiving::class);
+
+    scanGs1Label($test, '(01)08901234567074(17)271100(10)LOT-2611A(30)12')->assertSet('data.batch', 'LOT-2611A');
+
+    scanGs1Label($test, '8901234567074')
+        ->assertSet('data.label', null)
+        ->assertSet('data.gtin', null)
+        ->assertSet('data.batch', null)
+        ->assertSet('data.quantity', 1)
+        ->assertSet('data.product', null)
+        ->assertHasErrors(['data.label']);
+});
+
 it('rejects a label without an expiry date and fills nothing', function () {
     scanGs1Label(Livewire::test(Gs1Receiving::class), '(01)08901234567074(10)LOT-2611A')
         ->assertReturned(fn (array $result): bool => $result['passes'] === false
