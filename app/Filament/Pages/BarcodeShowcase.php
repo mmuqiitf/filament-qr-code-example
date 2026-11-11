@@ -47,6 +47,7 @@ class BarcodeShowcase extends Page
         'upca' => '036000291452',
         'code39' => 'LOT-A1',
         'itf14' => '15400141288763',
+        'gs1-128' => '(01)08901234567074(10)L2611A',
     ];
 
     /**

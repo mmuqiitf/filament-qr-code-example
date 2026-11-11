@@ -19,3 +19,16 @@
 .mfg-station .fi-qr-sequence-step[data-qr-step-active='false'] {
     text-decoration: line-through;
 }
+
+/*
+ * The package's barcode download link uses text-primary-600; with the amber
+ * primary that is 3.2:1 on white (axe color-contrast, WCAG AA needs 4.5:1).
+ * primary-700 passes; dark mode keeps primary-400.
+ */
+.fi-qr-barcode [data-qr-part='barcode.download'] {
+    color: var(--primary-700);
+}
+
+.dark .fi-qr-barcode [data-qr-part='barcode.download'] {
+    color: var(--primary-400);
+}
