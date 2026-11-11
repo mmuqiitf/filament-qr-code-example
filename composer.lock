@@ -3645,12 +3645,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/mmuqiitf/filament-qr-code.git",
-                "reference": "4230995017ddb5b1b99eed8edf0ada7e52930987"
+                "reference": "fce420586ed92c3ef9a44aa6a8e267e3e8dda4f7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/mmuqiitf/filament-qr-code/zipball/4230995017ddb5b1b99eed8edf0ada7e52930987",
-                "reference": "4230995017ddb5b1b99eed8edf0ada7e52930987",
+                "url": "https://api.github.com/repos/mmuqiitf/filament-qr-code/zipball/fce420586ed92c3ef9a44aa6a8e267e3e8dda4f7",
+                "reference": "fce420586ed92c3ef9a44aa6a8e267e3e8dda4f7",
                 "shasum": ""
             },
             "require": {
@@ -3721,7 +3721,7 @@
                 "issues": "https://github.com/mmuqiitf/filament-qr-code/issues",
                 "source": "https://github.com/mmuqiitf/filament-qr-code/tree/main"
             },
-            "time": "2026-11-09T23:20:31+00:00"
+            "time": "2026-11-11T03:23:17+00:00"
         },
         {
             "name": "monolog/monolog",
