@@ -57,7 +57,7 @@ it('keeps fast typing in the notes out of the sequence steps', function () {
     $page->assertValue('textarea[id="form.notes"]', 'mirror scratch on the left side');
 
     expect(sequenceStepValues($page))->toBe(['', '', '']);
-})->skip(fn (): bool => ! qrPackageHasQaFixes(), 'Needs filament-qr-code#92 (free text is not a burst).');
+});
 
 it('adds a line at the till when a code is typed and sent with Enter', function () {
     $page = signIn()->navigate('/admin/pos-checkout')->waitForEvent('networkidle');
@@ -68,7 +68,7 @@ it('adds a line at the till when a code is typed and sent with Enter', function 
         ->wait(1.5)
         ->assertSee('Wireless Scanner')
         ->assertNoJavaScriptErrors();
-})->skip(fn (): bool => ! qrPackageHasQaFixes(), 'Needs filament-qr-code#92 (Enter in continuous mode).');
+});
 
 it('does not report the camera as denied before Start is pressed', function (string $path) {
     signIn()->navigate($path)
@@ -81,7 +81,7 @@ it('does not report the camera as denied before Start is pressed', function (str
     'manufacturing' => '/admin/manufacturing',
     'shelf audit' => '/admin/shelf-audit',
     'sequential scanning' => '/admin/work-order-sequence',
-])->skip(fn (): bool => ! qrPackageHasQaFixes(), 'Needs filament-qr-code#92 (no camera request before Start).');
+]);
 
 it('says why an item with too few serials is not received', function () {
     $page = signIn()->navigate('/admin/goods-receiving')->waitForEvent('networkidle');
@@ -98,4 +98,4 @@ it('says why an item with too few serials is not received', function () {
         ->assertNoJavaScriptErrors();
 
     expect(GoodsReceipt::count())->toBe(0);
-})->skip(fn (): bool => ! qrPackageHasQaFixes(), 'Needs filament-qr-code#92 (sequence step errors are shown).');
+});

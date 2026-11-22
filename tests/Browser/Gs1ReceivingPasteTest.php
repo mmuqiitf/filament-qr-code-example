@@ -65,4 +65,4 @@ it('keeps the reason for a rejected sample label sent with Enter, and receives n
         ->assertNoJavaScriptErrors();
 
     expect(ReceivedLine::count())->toBe(0);
-})->skip(fn (): bool => ! qrPackageHasQaFixes(), 'Needs filament-qr-code#92 (Enter on a rejected typed value).')->with(fn () => array_column(array_filter(Gs1SampleLabels::all(), fn (array $s): bool => $s['expected'] !== null), 'key'));
+})->with(fn () => array_column(array_filter(Gs1SampleLabels::all(), fn (array $s): bool => $s['expected'] !== null), 'key'));

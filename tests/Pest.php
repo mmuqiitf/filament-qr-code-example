@@ -51,15 +51,3 @@ expect()->extend('toBeOne', function () {
 | global functions to help you to reduce the number of lines of code in your test files.
 |
 */
-
-/**
- * Whether the installed filament-qr-code has the browser-QA fixes from
- * mmuqiitf/filament-qr-code#92. Browser tests for those fixes skip until the
- * lock includes them, then run on their own.
- */
-function qrPackageHasQaFixes(): bool
-{
-    $dist = base_path('vendor/mmuqiitf/filament-qr-code/resources/dist/filament-qr-code.js');
-
-    return is_file($dist) && str_contains((string) file_get_contents($dist), 'contenteditable');
-}
