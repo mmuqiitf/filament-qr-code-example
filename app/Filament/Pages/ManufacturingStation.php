@@ -41,7 +41,7 @@ class ManufacturingStation extends Page
 
     protected static \UnitEnum|string|null $navigationGroup = 'Workflows & Operations';
 
-    protected static ?int $navigationSort = 4;
+    protected static ?int $navigationSort = 7;
 
     protected static ?string $title = 'Manufacturing Station';
 

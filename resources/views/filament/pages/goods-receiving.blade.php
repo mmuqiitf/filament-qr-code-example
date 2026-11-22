@@ -21,6 +21,7 @@
                     <x-filament::input.wrapper class="w-20">
                         <x-filament::input type="number" min="1" max="20" wire:model.live="quantity" />
                     </x-filament::input.wrapper>
+                    <span class="text-xs text-gray-500">{{ __('Locks once the SKU is scanned.') }}</span>
                 </label>
             </div>
         </x-filament::section>

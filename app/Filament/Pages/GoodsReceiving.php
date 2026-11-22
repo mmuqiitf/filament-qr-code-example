@@ -31,7 +31,7 @@ class GoodsReceiving extends Page
 
     protected static \UnitEnum|string|null $navigationGroup = 'Workflows & Operations';
 
-    protected static ?int $navigationSort = 3;
+    protected static ?int $navigationSort = 5;
 
     protected static ?string $title = 'Goods Receiving';
 
@@ -47,6 +47,12 @@ class GoodsReceiving extends Page
     public bool $autoSubmit = true;
 
     public int $quantity = 2;
+
+    /**
+     * Units locked when the SKU is accepted. Null until then, so the input
+     * still changes how many serials the next item asks for.
+     */
+    public ?int $units = null;
 
     public static function getRelativeRouteName(Panel $panel): string
     {
@@ -81,8 +87,13 @@ class GoodsReceiving extends Page
                         ScanStep::make('serials')
                             ->label('Serial numbers')
                             ->validateUsing(['regex:/^SN-[A-Z0-9-]+$/'])
-                            ->repeat(fn (): int => max(1, $this->quantity)),
+                            ->repeat(fn (): int => $this->unitsForItem()),
                     ])
+                    ->onStepAccepted(function (string $step): void {
+                        if ($step === 'sku') {
+                            $this->units = $this->unitsForItem();
+                        }
+                    })
                     ->validateAllUsing(function (array $values): array {
                         $prefix = 'SN-'.($values['sku'] ?? '').'-';
 
@@ -107,7 +118,7 @@ class GoodsReceiving extends Page
         // getState() re-runs every step check and the whole-set check.
         $receipt = $this->form->getState()['receipt'] ?? [];
 
-        if (blank($receipt['po'] ?? null) || blank($receipt['sku'] ?? null) || count($receipt['serials'] ?? []) < $this->quantity) {
+        if (blank($receipt['po'] ?? null) || blank($receipt['sku'] ?? null) || count($receipt['serials'] ?? []) < $this->unitsForItem()) {
             Notification::make()
                 ->title('Incomplete item')
                 ->body('Scan the PO, the SKU and every serial before receiving.')
@@ -133,8 +144,37 @@ class GoodsReceiving extends Page
             ->success()
             ->send();
 
+        // The next item starts unlocked. Clear before the sequence reset so a
+        // state write cannot freeze the count that just finished.
+        $this->units = null;
+
         // Start the next item, keeping the sticky PO (same as the sequence's own reset).
         $this->sequence()->resetSequence();
+    }
+
+    public function updatedQuantity(): void
+    {
+        $clamped = max(1, min(20, (int) $this->quantity));
+        $next = $this->units ?? $clamped;
+
+        if ($this->quantity !== $next) {
+            $this->quantity = $next;
+        }
+    }
+
+    public function updatedData(): void
+    {
+        $receipt = $this->data['receipt'] ?? [];
+        $serials = $receipt['serials'] ?? null;
+
+        if (blank($receipt['sku'] ?? null) && blank($serials)) {
+            $this->units = null;
+        }
+    }
+
+    public function unitsForItem(): int
+    {
+        return $this->units ?? max(1, min(20, $this->quantity));
     }
 
     protected function sequence(): QrScanSequence

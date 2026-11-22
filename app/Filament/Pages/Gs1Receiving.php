@@ -47,7 +47,7 @@ class Gs1Receiving extends Page implements HasTable
 
     protected static \UnitEnum|string|null $navigationGroup = 'Workflows & Operations';
 
-    protected static ?int $navigationSort = 3;
+    protected static ?int $navigationSort = 6;
 
     protected static ?string $title = 'GS1 Receiving';
 

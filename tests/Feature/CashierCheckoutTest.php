@@ -39,6 +39,21 @@ it('can scan a product barcode and update cart calculation', function () {
         ->assertSet('total', 54.00);
 });
 
+it('finds a product by its barcode when the sku differs', function () {
+    Product::factory()->create([
+        'name' => 'USB Scanner',
+        'sku' => 'SKU-SCAN-01',
+        'barcode' => '1234567890128',
+        'price' => 50.00,
+    ]);
+
+    Livewire::test(CashierCheckout::class)
+        ->call('scanProduct', '1234567890128')
+        ->assertSee('USB Scanner')
+        ->assertSet('cart.0.sku', 'SKU-SCAN-01')
+        ->assertSet('cart.0.quantity', 1);
+});
+
 it('increments quantity when the same product is scanned multiple times', function () {
     $product = Product::factory()->create([
         'sku' => 'SKU-MULTI-01',

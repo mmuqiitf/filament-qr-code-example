@@ -26,6 +26,14 @@ it('serves the page at /admin/qr-labels under the qrLabels route name', function
     $this->get(QrLabels::getUrl())->assertSuccessful()->assertSee('QR Labels');
 });
 
+it('caps each label sheet', function () {
+    Product::factory()->count(QrLabels::LABEL_LIMIT + 5)->create();
+
+    $labels = Livewire::test(QrLabels::class)->instance()->labels();
+
+    expect($labels)->toHaveCount(QrLabels::LABEL_LIMIT);
+});
+
 it('lists the codes each scanning demo expects', function (string $set, array $codes) {
     $labels = Livewire::test(QrLabels::class)->set('data.set', $set)->instance()->labels();
 

@@ -32,7 +32,7 @@ class ShelfAudit extends Page
 
     protected static \UnitEnum|string|null $navigationGroup = 'Workflows & Operations';
 
-    protected static ?int $navigationSort = 5;
+    protected static ?int $navigationSort = 8;
 
     protected static ?string $title = 'Shelf Audit';
 
