@@ -30,6 +30,8 @@ class Gs1Labels extends Page
 
     protected static \UnitEnum|string|null $navigationGroup = 'Generators & Display';
 
+    protected static ?int $navigationSort = 3;
+
     protected static ?string $title = 'GS1 Labels';
 
     protected static ?string $navigationLabel = 'GS1 Labels';

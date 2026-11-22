@@ -12,8 +12,10 @@ use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Support\Str;
 use Mmuqiitf\FilamentQrCode\Concerns\HasHardwareScanner;
+use Mmuqiitf\FilamentQrCode\Enums\ScanInput;
 use Mmuqiitf\FilamentQrCode\Events\QrCodeScanned;
 use Mmuqiitf\FilamentQrCode\Forms\Components\QrHardwareScannerListener;
+use Mmuqiitf\FilamentQrCode\Forms\Components\QrScanner;
 
 /**
  * @property Schema $form
@@ -26,7 +28,7 @@ class CashierCheckout extends Page
 
     protected static \UnitEnum|string|null $navigationGroup = 'Workflows & Operations';
 
-    protected static ?int $navigationSort = 2;
+    protected static ?int $navigationSort = 4;
 
     protected static ?string $title = 'Cashier POS Checkout';
 
@@ -108,14 +110,20 @@ class CashierCheckout extends Page
 
         // Server-observed scan: enters the QrCodeScanned audit trail (logged when
         // qr-code.audit.enabled). Live bursts stay client-side until they reach us here.
+        // runScanChecks() does not fire this event, so the till records every attempt.
         event(new QrCodeScanned(code: $cleaned, source: 'cashier-pos', field: 'scanInput'));
 
-        $product = Product::query()
-            ->where('sku', $cleaned)
-            ->orWhere('barcode', $cleaned)
-            ->first();
+        $result = QrScanner::make('scanInput')
+            ->lookup(Product::class, 'sku')
+            ->lookupUsing(
+                fn (string $code): ?Product => Product::query()->where('barcode', $code)->first(),
+                fallback: true,
+            )
+            ->runScanChecks($cleaned, ScanInput::Hardware);
 
-        if (! $product) {
+        $product = $result->record;
+
+        if (! $result->passes || ! $product instanceof Product) {
             Notification::make()
                 ->title('Product Not Found')
                 ->body("No catalog item matches barcode/SKU [{$cleaned}].")

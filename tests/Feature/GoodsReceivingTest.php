@@ -116,6 +116,45 @@ it('waits for the Receive button when auto-submit is off and re-checks on submit
     $test->assertSet('data.receipt', ['po' => 'PO-7001']);
 });
 
+it('locks the unit count when the SKU is scanned', function () {
+    $test = Livewire::test(GoodsReceiving::class);
+
+    receivingScan($test, 'po', 'PO-7001');
+    receivingScan($test, 'sku', 'PRD-1001');
+
+    $test->set('quantity', 4)
+        ->assertSet('quantity', 2)
+        ->assertSet('units', 2);
+
+    receivingScan($test, 'lot', 'LOT-A1');
+    receivingScan($test, 'serials', 'SN-PRD-1001-0001');
+
+    expect(receivingScan($test, 'serials', 'SN-PRD-1001-0002'))->toMatchArray(['completed' => true, 'submitted' => true]);
+    expect(GoodsReceipt::sole()->serials)->toHaveCount(2);
+    $test->assertSet('units', null);
+});
+
+it('unlocks the unit count when the receipt is cleared', function () {
+    $test = Livewire::test(GoodsReceiving::class);
+
+    receivingScan($test, 'po', 'PO-7001');
+    receivingScan($test, 'sku', 'PRD-1001');
+    $test->assertSet('units', 2);
+
+    $test->set('data.receipt', ['po' => 'PO-7001'])
+        ->assertSet('units', null)
+        ->set('quantity', 4)
+        ->assertSet('quantity', 4);
+});
+
+it('clamps the unit count before the SKU is scanned', function () {
+    Livewire::test(GoodsReceiving::class)
+        ->set('quantity', 99)
+        ->assertSet('quantity', 20)
+        ->set('quantity', 0)
+        ->assertSet('quantity', 1);
+});
+
 it('collects as many serials as the item quantity', function () {
     $test = Livewire::test(GoodsReceiving::class)->set('quantity', 3);
 

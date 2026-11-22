@@ -34,6 +34,8 @@ class QrLabels extends Page
 
     protected static \UnitEnum|string|null $navigationGroup = 'Generators & Display';
 
+    protected static ?int $navigationSort = 1;
+
     protected static ?string $title = 'QR Labels';
 
     protected static ?string $navigationLabel = 'QR Labels';
@@ -44,6 +46,8 @@ class QrLabels extends Page
      * @var array<string, mixed>|null
      */
     public ?array $data = [];
+
+    public const LABEL_LIMIT = 48;
 
     public const SETS = [
         'products' => 'Product SKUs (POS, receiving)',
@@ -105,7 +109,7 @@ class QrLabels extends Page
      */
     public function labels(): array
     {
-        return array_values(match ($this->data['set'] ?? 'products') {
+        $labels = match ($this->data['set'] ?? 'products') {
             'products' => Product::query()->orderBy('sku')->get()
                 ->map(fn (Product $product): array => ['code' => (string) $product->sku, 'caption' => (string) $product->name])->all(),
             'work-orders' => AssemblyOrder::query()->where('status', 'open')->orderBy('number')->get()
@@ -119,7 +123,9 @@ class QrLabels extends Page
                 ['code' => 'RW-07', 'caption' => 'Rework reason'],
             ],
             default => [],
-        });
+        };
+
+        return array_slice(array_values($labels), 0, self::LABEL_LIMIT);
     }
 
     /**
@@ -169,6 +175,10 @@ class QrLabels extends Page
         foreach (AssemblyOrder::query()->where('status', 'open')->with('bomLines')->orderBy('number')->get() as $order) {
             foreach ($order->bom() as $sku => $quantity) {
                 for ($unit = 1; $unit <= $quantity; $unit++) {
+                    if (count($labels) >= self::LABEL_LIMIT) {
+                        break 3;
+                    }
+
                     $labels[] = ['code' => sprintf('%s:%04d', $sku, $unit), 'caption' => "{$order->number} · {$sku}"];
                 }
             }

@@ -27,7 +27,7 @@ class QrCustomizer extends Page
 
     protected static \UnitEnum|string|null $navigationGroup = 'Workflows & Operations';
 
-    protected static ?int $navigationSort = 3;
+    protected static ?int $navigationSort = 9;
 
     protected static ?string $title = 'Interactive QR Customizer';
 

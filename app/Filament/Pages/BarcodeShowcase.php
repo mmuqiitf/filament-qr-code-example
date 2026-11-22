@@ -13,6 +13,7 @@ use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
+use Illuminate\Database\Eloquent\Collection;
 use Mmuqiitf\FilamentQrCode\Enums\BarcodeType;
 use Mmuqiitf\FilamentQrCode\Forms\Components\BarcodeDisplay;
 
@@ -31,11 +32,15 @@ class BarcodeShowcase extends Page
 
     protected static \UnitEnum|string|null $navigationGroup = 'Generators & Display';
 
+    protected static ?int $navigationSort = 2;
+
     protected static ?string $title = 'Barcode Showcase';
 
     protected static ?string $navigationLabel = 'Barcodes';
 
     protected static ?string $slug = 'barcode-showcase';
+
+    public const PRODUCT_LIMIT = 24;
 
     /**
      * Valid sample values, one per symbology (check digits included).
@@ -111,15 +116,13 @@ class BarcodeShowcase extends Page
                     ->description('Stored product barcodes as EAN-13. Values that are not valid EAN-13 fall back to Code 128.')
                     ->schema([
                         Grid::make(['default' => 1, 'md' => 2, 'xl' => 3])->schema(
-                            fn (): array => Product::query()->orderBy('sku')->get()
-                                ->filter(fn (Product $product): bool => filled($product->barcode))
+                            fn (): array => $this->productBarcodes()
                                 ->map(fn (Product $product): BarcodeDisplay => BarcodeDisplay::make("product_{$product->getKey()}")
                                     ->label($product->name)
                                     ->type(ProductBarcodeType::for($product->barcode))
                                     ->data($product->barcode)
                                     ->format(fn (): string => $this->format())
                                     ->dehydrated(false))
-                                ->values()
                                 ->all(),
                         ),
                     ]),
@@ -129,5 +132,20 @@ class BarcodeShowcase extends Page
     protected function format(): string
     {
         return ($this->data['format'] ?? 'svg') === 'png' ? 'png' : 'svg';
+    }
+
+    /**
+     * Filled barcodes only, so blanks do not use up the sheet.
+     *
+     * @return Collection<int, Product>
+     */
+    public function productBarcodes(): Collection
+    {
+        return Product::query()
+            ->whereNotNull('barcode')
+            ->where('barcode', '!=', '')
+            ->orderBy('sku')
+            ->limit(self::PRODUCT_LIMIT)
+            ->get();
     }
 }

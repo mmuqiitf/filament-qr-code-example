@@ -49,6 +49,25 @@ it('renders a valid try-it value', function () {
         ->assertDontSeeHtml('data-qr-part="barcode.error"');
 });
 
+it('shows at most 24 filled product barcodes', function () {
+    Product::factory()->create(['sku' => 'AAA-BLANK', 'name' => 'Blank Barcode', 'barcode' => null]);
+    Product::factory()->create(['sku' => 'AAA-EMPTY', 'name' => 'Empty Barcode', 'barcode' => '']);
+    Product::factory()->count(BarcodeShowcase::PRODUCT_LIMIT + 5)->sequence(fn ($sequence): array => [
+        'name' => sprintf('Shelf Product %02d', $sequence->index),
+        'sku' => sprintf('BCD-%04d', $sequence->index),
+    ])->create();
+
+    $component = Livewire::test(BarcodeShowcase::class);
+
+    $component->assertSee('Shelf Product 00')
+        ->assertSee('Shelf Product 23')
+        ->assertDontSee('Shelf Product 24')
+        ->assertDontSee('Blank Barcode')
+        ->assertDontSee('Empty Barcode');
+
+    expect($component->instance()->productBarcodes())->toHaveCount(BarcodeShowcase::PRODUCT_LIMIT);
+});
+
 it('shows product barcodes as EAN-13, falling back to Code 128 for other values', function () {
     Product::factory()->create(['sku' => 'PRD-1001', 'barcode' => '8901234567005', 'name' => 'Wireless Scanner']);
     Product::factory()->create(['sku' => 'PRD-1002', 'barcode' => 'INT-0042', 'name' => 'Internal Part']);
