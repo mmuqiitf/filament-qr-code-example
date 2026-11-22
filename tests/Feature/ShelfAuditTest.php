@@ -61,3 +61,20 @@ it('rejects unknown and duplicate codes on submit', function (array $codes) {
     'duplicate' => [['PRD-1001', 'PRD-1001']],
     'empty' => [[]],
 ]);
+
+it('matches a code scanned in lower case to its product', function () {
+    Livewire::test(ShelfAudit::class)
+        ->call('handleCollectorScan', 'prd-1003')
+        ->assertNotified(Notification::make()->title('USB-C Hub')->body('PRD-1003 counted.')->success());
+});
+
+it('records lower-case codes under their SKU', function () {
+    Livewire::test(ShelfAudit::class)
+        ->fillForm(['location' => 'Aisle A', 'codes' => ['prd-1001', 'PRD-1003']])
+        ->call('submit')
+        ->assertHasNoFormErrors();
+
+    expect(StockCount::sole())
+        ->counted->toBe(['PRD-1001', 'PRD-1003'])
+        ->missing->toBe(['PRD-1002']);
+});

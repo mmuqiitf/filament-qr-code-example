@@ -72,3 +72,32 @@ it('can lock steps read-only and notifies on corrections', function () {
         ->call('handleSequenceEdited', 'batch_number', 'BATCH-778')
         ->assertNotified('Sequence step corrected');
 });
+
+it('clears everything with Clear All, including the scanned steps', function () {
+    Livewire::test(WorkOrderSequence::class)
+        ->set('data.sequence', ['batch_number' => 'BATCH-42', 'operator_badge' => 'OP-001', 'equipment_code' => 'MC-09'])
+        ->set('data.batch_number', 'BATCH-42')
+        ->set('data.notes', 'Inspect passed')
+        ->call('clearAll')
+        ->assertSuccessful()
+        ->assertSet('data.batch_number', null)
+        ->assertSet('data.notes', null)
+        ->assertSet('data.sequence', fn ($sequence): bool => array_filter((array) $sequence) === [])
+        ->assertDispatched('qr-sequence-reset');
+});
+
+it('does not call the mount lifecycle hook from the page', function () {
+    expect(file_get_contents(resource_path('views/filament/pages/work-order-sequence.blade.php')))
+        ->not->toContain('wire:click="mount"')
+        ->toContain('wire:click="clearAll"');
+});
+
+it('resets the scanned steps with the Clear Sequence header action', function () {
+    Livewire::test(WorkOrderSequence::class)
+        ->set('data.sequence', ['batch_number' => 'BATCH-42', 'operator_badge' => 'OP-001', 'equipment_code' => 'MC-09'])
+        ->set('data.equipment_code', 'MC-09')
+        ->callAction('reset')
+        ->assertSet('data.equipment_code', null)
+        ->assertSet('data.sequence', fn ($sequence): bool => array_filter((array) $sequence) === [])
+        ->assertDispatched('qr-sequence-reset');
+});

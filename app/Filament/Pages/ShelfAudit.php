@@ -70,7 +70,8 @@ class ShelfAudit extends Page
                     ->distinctItems()
                     ->required()
                     ->rule(fn (): Closure => function (string $attribute, mixed $value, Closure $fail): void {
-                        $codes = array_map('strval', (array) $value);
+                        // SKUs are upper case; a handheld set to lower case still matches.
+                        $codes = array_map(fn (mixed $code): string => strtoupper((string) $code), (array) $value);
                         $unknown = array_diff($codes, Product::query()->whereIn('sku', $codes)->pluck('sku')->all());
 
                         if ($unknown !== []) {
@@ -90,6 +91,7 @@ class ShelfAudit extends Page
      */
     public function handleCollectorScan(string $code): void
     {
+        $code = strtoupper($code);
         $product = Product::query()->where('sku', $code)->first();
 
         if ($product === null) {
@@ -112,7 +114,7 @@ class ShelfAudit extends Page
     public function submit(): void
     {
         $state = $this->form->getState();
-        $counted = array_values($state['codes']);
+        $counted = array_values(array_unique(array_map(fn (mixed $code): string => strtoupper((string) $code), $state['codes'])));
 
         $missing = Product::query()
             ->whereNotIn('sku', $counted)

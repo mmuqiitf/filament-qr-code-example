@@ -31,6 +31,16 @@ class BadgeDirectory
     }
 
     /**
+     * Any badge in the directory, active or not, or null.
+     *
+     * @return array{badge: string, name: string, role: string, active: bool}|null
+     */
+    public function lookup(string $badge): ?array
+    {
+        return self::BADGES[$badge] ?? null;
+    }
+
+    /**
      * @return list<array{badge: string, name: string, role: string, active: bool}>
      */
     public function active(): array

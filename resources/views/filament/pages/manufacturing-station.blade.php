@@ -42,7 +42,7 @@
                 <ul class="space-y-1 text-sm" data-mfg-activity>
                     @foreach ($activity as $entry)
                         <li wire:key="activity-{{ $loop->index }}-{{ md5($entry['text']) }}" @class(['text-danger-600 dark:text-danger-400' => $entry['rejected']])>
-                            <span class="font-mono text-xs text-gray-500">{{ $entry['step'] }}</span>
+                            <span class="text-xs font-medium text-gray-500">{{ \App\Filament\Pages\ManufacturingStation::STEP_LABELS[$entry['step']] ?? $entry['step'] }}</span>
                             {{ $entry['text'] }}
                         </li>
                     @endforeach

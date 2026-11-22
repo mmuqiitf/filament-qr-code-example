@@ -172,3 +172,23 @@ it('styles the station with extra attributes, CSS variables, a render hook and t
         ->assertSeeHtml('data-mfg-sticky-pin')
         ->assertSeeHtml("\$dispatch('qr-sequence-pause', { field: 'data.station' })");
 });
+
+it('says why an inactive badge or a closed work order is refused', function () {
+    $test = Livewire::test(ManufacturingStation::class);
+
+    expect(stationScan($test, 'operator', 'OP-009'))->toMatchArray(['passes' => false, 'message' => 'Badge OP-009 is inactive.']);
+
+    stationScan($test, 'operator', 'OP-001');
+
+    expect(stationScan($test, 'order', 'WO-5003'))->toMatchArray(['passes' => false, 'message' => 'Work order WO-5003 is done, not open.'])
+        ->and(stationScan($test, 'order', 'WO-9999'))->toMatchArray(['passes' => false, 'message' => 'No record found for "WO-9999".']);
+});
+
+it('logs an accepted step once, without repeating the step name', function () {
+    $test = Livewire::test(ManufacturingStation::class);
+    startUnit($test);
+
+    expect($test->get('activity')[0])->toMatchArray(['step' => 'order', 'text' => 'WO-5001']);
+
+    $test->assertSeeHtml('Work order</span>')->assertDontSee('order: WO-5001');
+});

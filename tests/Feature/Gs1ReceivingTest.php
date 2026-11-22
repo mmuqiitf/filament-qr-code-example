@@ -253,3 +253,13 @@ it('lists received lines with their label drawn as GS1-128 through the signed im
         ->assertOk()
         ->assertHeader('Content-Type', 'image/svg+xml');
 });
+
+it('names the required fields the way their labels read', function () {
+    Livewire::test(Gs1Receiving::class)
+        ->call('receive')
+        ->assertSee('The GS1 label field is required.')
+        ->assertSee('The GTIN (01) field is required.')
+        ->assertSee('The expiry (17) field is required.')
+        ->assertDontSee('gS1 label')
+        ->assertDontSee('gTIN (01)');
+});
