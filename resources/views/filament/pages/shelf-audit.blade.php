@@ -1,14 +1,12 @@
 <x-filament-panels::page>
     {{-- QrCollector calls handleCollectorScan() on this page for each new code. --}}
     <div class="space-y-6">
-        <x-filament::callout
-            icon="heroicon-o-information-circle"
-            color="info"
-            heading="{{ __('Count a shelf with the batch collector') }}"
-        >
-            <p class="text-xs mt-1">
+        {{-- Filament's callout renders its heading as <h4> (out of order under the page's <h1>) and ignores the default slot, so the text goes in the description. --}}
+        <x-filament::callout icon="heroicon-o-information-circle" color="info">
+            <x-slot name="description">
+                <strong class="font-semibold">{{ __('Count a shelf with the batch collector') }}</strong>
                 {{ __('Scan every product label on the shelf, e.g. PRD-1001, PRD-1003 (camera or handheld). Each code is looked up as it lands; repeats are ignored and unknown codes are flagged. Submit to record the count and see which products were not seen.') }}
-            </p>
+            </x-slot>
         </x-filament::callout>
 
         <form wire:submit="submit" class="space-y-4">

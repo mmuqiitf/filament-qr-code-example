@@ -1,13 +1,11 @@
 <x-filament-panels::page>
     <div class="space-y-6">
-        <x-filament::callout
-            icon="heroicon-o-information-circle"
-            color="info"
-            heading="{{ __('Scan, scan, scan') }}"
-        >
-            <p class="text-xs mt-1">
+        {{-- Filament's callout renders its heading as <h4> (out of order under the page's <h1>) and ignores the default slot, so the text goes in the description. --}}
+        <x-filament::callout icon="heroicon-o-information-circle" color="info">
+            <x-slot name="description">
+                <strong class="font-semibold">{{ __('Scan, scan, scan') }}</strong>
                 {{ __('Shoot barcodes with a handheld scanner anywhere on this page (no need to click the field), or use the camera. Try PRD-1001 twice (quantity 2) and PRD-9999 (unknown SKU).') }}
-            </p>
+            </x-slot>
         </x-filament::callout>
 
         <x-filament::section heading="{{ __('Scanner options') }}" compact>

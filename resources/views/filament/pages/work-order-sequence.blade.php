@@ -17,19 +17,21 @@
             {{ __('Allow step corrections (unedited vs edited values)') }}
         </label>
 
-        {{-- Instructions Callout --}}
-        <x-filament::callout
-            icon="heroicon-o-information-circle"
-            color="amber"
-            heading="{{ __('How Sequential Scanning Works') }}"
-        >
-            <ol class="list-decimal list-inside space-y-1 text-xs mt-1">
-                <li>{{ __('Press Start, then point each code at the single shared camera feed — or use your handheld USB/Bluetooth scanner.') }}</li>
-                <li>{{ __('Each scan fills the active step, plays audio/haptic feedback, and advances to the next field automatically.') }}</li>
-                <li>{{ __('Click any step to re-target it, or pick another camera from the dropdown.') }}</li>
-                <li>{{ __('Each step is a plain input: scans fill it, and you can type or correct any value by hand.') }}</li>
-                <li>{{ __('Untick corrections above to lock steps read-only.') }}</li>
-            </ol>
+        {{-- Instructions callout. Filament's callout renders its heading as <h4> (out of order under the page's <h1>) and ignores the default slot,
+             so the title goes in the description and the steps in the footer (the description is a <p>, which cannot hold a list). --}}
+        <x-filament::callout icon="heroicon-o-information-circle" color="amber">
+            <x-slot name="description">
+                <strong class="font-semibold">{{ __('How Sequential Scanning Works') }}</strong>
+            </x-slot>
+            <x-slot name="footer">
+                <ol class="list-decimal list-inside space-y-1 text-sm">
+                    <li>{{ __('Press Start, then point each code at the single shared camera feed — or use your handheld USB/Bluetooth scanner.') }}</li>
+                    <li>{{ __('Each scan fills the active step, plays audio/haptic feedback, and advances to the next field automatically.') }}</li>
+                    <li>{{ __('Click any step to re-target it, or pick another camera from the dropdown.') }}</li>
+                    <li>{{ __('Each step is a plain input: scans fill it, and you can type or correct any value by hand.') }}</li>
+                    <li>{{ __('Untick corrections above to lock steps read-only.') }}</li>
+                </ol>
+            </x-slot>
         </x-filament::callout>
 
         {{-- Form --}}

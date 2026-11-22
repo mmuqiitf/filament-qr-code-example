@@ -1,13 +1,11 @@
 <x-filament-panels::page>
     <div class="space-y-6">
-        <x-filament::callout
-            icon="heroicon-o-information-circle"
-            color="info"
-            heading="{{ __('Build a unit with a handheld scanner') }}"
-        >
-            <p class="text-xs mt-1">
+        {{-- Filament's callout renders its heading as <h4> (out of order under the page's <h1>) and ignores the default slot, so the text goes in the description. --}}
+        <x-filament::callout icon="heroicon-o-information-circle" color="info">
+            <x-slot name="description">
+                <strong class="font-semibold">{{ __('Build a unit with a handheld scanner') }}</strong>
                 {{ __('Scan your badge (OP-001), a work order (WO-5001), then one label per component (CMP-100:0001, CMP-100:0002 and CMP-200:0001) and DONE. WO-5002 is a rework order and asks for a reason such as RW-07. Badge and work order stay for the next unit. Print the labels from the QR Labels page.') }}
-            </p>
+            </x-slot>
         </x-filament::callout>
 
         <div class="flex flex-wrap gap-2">
