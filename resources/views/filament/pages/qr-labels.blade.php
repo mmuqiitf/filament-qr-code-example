@@ -10,14 +10,12 @@
     </style>
 
     <div class="space-y-6">
-        <x-filament::callout
-            icon="heroicon-o-information-circle"
-            color="info"
-            heading="{{ __('Print the codes the scanning demos expect') }}"
-        >
-            <p class="text-xs mt-1">
+        {{-- Filament's callout renders its heading as <h4> (out of order under the page's <h1>) and ignores the default slot, so the text goes in the description. --}}
+        <x-filament::callout icon="heroicon-o-information-circle" color="info">
+            <x-slot name="description">
+                <strong class="font-semibold">{{ __('Print the codes the scanning demos expect') }}</strong>
                 {{ __('Pick a label set, print the sheet (three labels per row, camera UI hidden) and scan the labels on the POS, Goods Receiving and Manufacturing pages with a phone or a handheld scanner.') }}
-            </p>
+            </x-slot>
         </x-filament::callout>
 
         <div class="filament-qr-no-print space-y-4">

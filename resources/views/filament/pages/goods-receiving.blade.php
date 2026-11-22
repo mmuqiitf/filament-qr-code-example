@@ -1,13 +1,11 @@
 <x-filament-panels::page>
     <div class="space-y-6">
-        <x-filament::callout
-            icon="heroicon-o-information-circle"
-            color="info"
-            heading="{{ __('Receive with a handheld scanner') }}"
-        >
-            <p class="text-xs mt-1">
+        {{-- Filament's callout renders its heading as <h4> (out of order under the page's <h1>) and ignores the default slot, so the text goes in the description. --}}
+        <x-filament::callout icon="heroicon-o-information-circle" color="info">
+            <x-slot name="description">
+                <strong class="font-semibold">{{ __('Receive with a handheld scanner') }}</strong>
                 {{ __('Scan PO-7001, then PRD-1001, then a lot such as LOT-A1 (or skip it by scanning the first serial straight away), then one serial per unit, such as SN-PRD-1001-0001. The PO stays for the next item; use Clear to change it.') }}
-            </p>
+            </x-slot>
         </x-filament::callout>
 
         <x-filament::section heading="{{ __('Receiving options') }}" compact>
