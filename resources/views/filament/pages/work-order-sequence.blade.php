@@ -28,7 +28,7 @@
                     <li>{{ __('Press Start, then point each code at the single shared camera feed — or use your handheld USB/Bluetooth scanner.') }}</li>
                     <li>{{ __('Each scan fills the active step, plays audio/haptic feedback, and advances to the next field automatically.') }}</li>
                     <li>{{ __('Click any step to re-target it, or pick another camera from the dropdown.') }}</li>
-                    <li>{{ __('Each step is a plain input: scans fill it, and you can type or correct any value by hand.') }}</li>
+                    <li>{{ __('Each step is a plain input: scans fill it, and you can type or correct any value by hand. Step values are upper-cased; the notes are kept as typed.') }}</li>
                     <li>{{ __('Untick corrections above to lock steps read-only.') }}</li>
                 </ol>
             </x-slot>
@@ -43,7 +43,7 @@
                     {{ __('Complete & Submit Work Order') }}
                 </x-filament::button>
 
-                <x-filament::button type="button" color="gray" wire:click="mount">
+                <x-filament::button type="button" color="gray" wire:click="clearAll">
                     {{ __('Clear All') }}
                 </x-filament::button>
             </div>

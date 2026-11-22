@@ -58,7 +58,7 @@ class ScannerShowcase extends Page
             ->statePath('data')
             ->components([
                 Section::make('1. Basic scanner')
-                    ->description('Defaults: every symbology (effective 12 fps auto-degrade when unrestricted), upload fallback, rear-camera preference. Served over https/localhost — cameras are blocked in insecure contexts.')
+                    ->description('Defaults: every symbology (effective 12 fps auto-degrade when unrestricted), upload fallback (Scan, then "Scan from image" in the camera dialog), rear-camera preference. Served over https/localhost — cameras are blocked in insecure contexts.')
                     ->schema([
                         QrScanner::make('basic_sku')
                             ->label('SKU')

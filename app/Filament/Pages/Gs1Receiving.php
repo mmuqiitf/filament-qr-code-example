@@ -92,6 +92,8 @@ class Gs1Receiving extends Page implements HasTable
                     ->schema([
                         QrScanner::make('label')
                             ->label('GS1 label')
+                            // Filament lower-cases the label's first letter ("gS1 label") in messages.
+                            ->validationAttribute('GS1 label')
                             // Fills these fields and empties the ones a label does not carry.
                             ->gs1(fill: self::FILL, require: ['01', '17'])
                             // Later checks see the bracketed string, so parse it again for the AIs.
@@ -129,6 +131,7 @@ class Gs1Receiving extends Page implements HasTable
                                 ->dehydrated(false),
                             TextInput::make('gtin')
                                 ->label('GTIN (01)')
+                                ->validationAttribute('GTIN (01)')
                                 ->readOnly()
                                 ->required(),
                             DatePicker::make('expires_at')

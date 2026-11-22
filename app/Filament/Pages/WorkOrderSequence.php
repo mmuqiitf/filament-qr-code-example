@@ -108,6 +108,24 @@ class WorkOrderSequence extends Page
             ]);
     }
 
+    /**
+     * Start over: empty notes and every scanned step, in the browser too.
+     * (The view used to call mount(), which Livewire refuses to run.)
+     */
+    public function clearAll(): void
+    {
+        $this->form->fill(['status' => 'in_progress']);
+
+        $this->sequence()?->resetSequence(keepSticky: false);
+    }
+
+    protected function sequence(): ?QrScanSequence
+    {
+        $sequence = $this->form->getComponent(fn ($component): bool => $component instanceof QrScanSequence);
+
+        return $sequence instanceof QrScanSequence ? $sequence : null;
+    }
+
     public function submit(): void
     {
         // The sequence container writes scans via $wire.set into its own
@@ -115,13 +133,7 @@ class WorkOrderSequence extends Page
         // statePath('data'), so read it back through the helpers instead of
         // hand-rolled merges.
         // The container lives inside a Section, so search flattened components.
-        $sequence = null;
-        foreach ($this->form->getFlatComponents() as $component) {
-            if ($component instanceof QrScanSequence) {
-                $sequence = $component;
-                break;
-            }
-        }
+        $sequence = $this->sequence();
 
         $state = $sequence instanceof QrScanSequence
             ? $sequence->mergeSequenceState($this->form->getState())
@@ -177,7 +189,7 @@ class WorkOrderSequence extends Page
             Action::make('reset')
                 ->label('Clear Sequence')
                 ->color('gray')
-                ->action(fn () => $this->form->fill()),
+                ->action(fn () => $this->clearAll()),
         ];
     }
 }

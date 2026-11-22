@@ -55,6 +55,16 @@ class ManufacturingStation extends Page
     public ?array $data = [];
 
     /**
+     * Step key => label, for the activity feed.
+     */
+    public const STEP_LABELS = [
+        'operator' => 'Operator badge',
+        'order' => 'Work order',
+        'rework_reason' => 'Rework reason',
+        'components' => 'Components',
+    ];
+
+    /**
      * Newest first.
      *
      * @var list<array{step: string, text: string, rejected: bool}>
@@ -80,20 +90,24 @@ class ManufacturingStation extends Page
                     ->statePath('station')
                     ->steps([
                         ScanStep::make('operator')
-                            ->label('Operator badge')
+                            ->label(self::STEP_LABELS['operator'])
                             ->validateUsing(['regex:/^OP-\d{3}$/'])
-                            ->lookupUsing(fn (string $code): ?array => app(BadgeDirectory::class)->find($code))
+                            // Look up every badge, then say why an inactive one is refused
+                            // (closures run after the lookup and get its $record).
+                            ->lookupUsing(fn (string $code): ?array => app(BadgeDirectory::class)->lookup($code))
+                            ->validateUsing(fn (string $code, ?array $record): ?string => ($record['active'] ?? false) ? null : "Badge {$code} is inactive.")
                             ->sticky(),
                         ScanStep::make('order')
-                            ->label('Work order')
-                            ->lookup(AssemblyOrder::class, 'number', fn ($query) => $query->where('status', 'open'))
+                            ->label(self::STEP_LABELS['order'])
+                            ->lookup(AssemblyOrder::class, 'number')
+                            ->validateUsing(fn (string $code, ?AssemblyOrder $record): ?string => $record?->status === 'open' ? null : "Work order {$code} is {$record?->status}, not open.")
                             ->sticky(),
                         ScanStep::make('rework_reason')
-                            ->label('Rework reason')
+                            ->label(self::STEP_LABELS['rework_reason'])
                             ->when(fn (array $values): bool => (bool) AssemblyOrder::findOpen($values['order'] ?? null)?->is_rework)
                             ->validateUsing(['regex:/^RW-\d{2}$/']),
                         ScanStep::make('components')
-                            ->label('Components')
+                            ->label(self::STEP_LABELS['components'])
                             ->validateUsing(['regex:/^CMP-\d{3}:\d{4}$/'])
                             // Open-ended: the operator scans DONE (or presses Done) when the unit is
                             // assembled, and validateAllUsing() checks the BOM is complete.
@@ -192,7 +206,7 @@ class ManufacturingStation extends Page
         $text = match (true) {
             ! $result->passes => "{$result->code}: {$result->message}",
             $step === 'operator' && is_array($result->record) => "{$result->record['name']} signed in",
-            default => "{$step}: {$result->code}",
+            default => $result->code,
         };
 
         array_unshift($this->activity, ['step' => $step, 'text' => $text, 'rejected' => ! $result->passes]);
