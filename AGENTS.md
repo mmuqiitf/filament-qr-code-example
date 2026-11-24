@@ -180,6 +180,8 @@ This project has domain-specific skills available in `**/skills/**`. You MUST ac
 
 # Filament QR Code package workflow
 
-- `mmuqiitf/filament-qr-code` is installed from Packagist (`^0.1`), not a local path repo, so CI works on a fresh checkout. To test unreleased package changes locally, temporarily add a Composer path repository (`../filament-qr-code`, symlink) and revert before committing.
-- Package JS/CSS does NOT: Filament serves the bundle from `public/css|js/mmuqiitf/filament-qr-code/`, not from the package `dist/`. After any package `npm run build`, run `php artisan filament:assets` here, otherwise you are smoke-testing stale code. `filament:assets` skips the lazy decoder `chunks/` dir, so also copy `vendor/mmuqiitf/filament-qr-code/resources/dist/chunks/*.js` to `public/js/mmuqiitf/filament-qr-code/chunks/` or first camera use 404s.
-- After package Blade changes, run `php artisan optimize:clear` (compiled views + Filament cache).
+- Require `mmuqiitf/filament-qr-code` as `^1.2.0`. CI resolves that constraint on a fresh checkout. A path repository (`../filament-qr-code`, symlink) is only for trying commits that are not tagged yet. Remove it before committing.
+- After a package `npm run build`, run `php artisan filament:assets` here. Filament serves `public/js/mmuqiitf/filament-qr-code/` and `public/css/mmuqiitf/filament-qr-code/`. The decoder is the single published file `filament-qr-code-decoder.js`.
+- After package Blade changes, run `php artisan optimize:clear`.
+- Demo login is `admin@example.com` / `password` (`DatabaseSeeder`). The page list is in `README.md`. Shelf Audit is `/admin/shelf-audit` and is not in that table.
+- Delete a leftover `public/hot` before a browser pass. That file points Vite at a dev server and the built panel CSS does not load.
