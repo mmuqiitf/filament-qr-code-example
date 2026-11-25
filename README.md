@@ -1,6 +1,6 @@
 # filament-qr-code example app
 
-A Filament v5 panel that shows [mmuqiitf/filament-qr-code](https://github.com/mmuqiitf/filament-qr-code) (`dev-feat/1.3-label-printing as 1.3.0` on this branch; `^1.3` after that package ships) in realistic flows.
+A Filament v5 panel that shows [mmuqiitf/filament-qr-code](https://github.com/mmuqiitf/filament-qr-code) (`^1.3`) in realistic flows.
 
 ## Setup
 

@@ -105,9 +105,7 @@ it('keeps the products table narrow enough for a 1280px screen', function () {
     expect($actions)->toHaveCount(1)
         ->and($actions[0])->toBeInstanceOf(ActionGroup::class)
         ->and(collect($actions[0]->getActions())->map(fn ($a) => $a->getName())->values()->all())
-        ->toBe(class_exists(PrintLabelsAction::class)
-            ? ['download_qr', 'print_labels', 'view', 'edit']
-            : ['download_qr', 'view', 'edit']);
+        ->toBe(['download_qr', 'print_labels', 'view', 'edit']);
 
     expect($table->getColumn('barcode'))->toBeInstanceOf(BarcodeColumn::class);
 });
@@ -140,10 +138,6 @@ it('falls back to Code 128 for a product barcode that is not a valid EAN-13', fu
 });
 
 it('builds a Digital Link QR and GS1 DataMatrix for a product print label', function () {
-    if (! class_exists(PrintLabelsAction::class)) {
-        $this->markTestSkipped('needs filament-qr-code 1.3 print actions');
-    }
-
     $product = Product::factory()->create([
         'sku' => 'PRD-PRINT',
         'name' => 'Printable Widget',
@@ -164,10 +158,6 @@ it('builds a Digital Link QR and GS1 DataMatrix for a product print label', func
 });
 
 it('opens a printable Avery sheet for a product with a valid GTIN', function () {
-    if (! class_exists(PrintLabelsAction::class)) {
-        $this->markTestSkipped('needs filament-qr-code 1.3 print actions');
-    }
-
     $product = Product::factory()->create([
         'sku' => 'PRD-SHEET',
         'name' => 'Sheet Widget',
@@ -197,10 +187,6 @@ it('pads a valid product EAN-13 to GTIN-14 and ignores invalid or non-numeric ba
 });
 
 it('falls back to a SKU QR when the product barcode is not a valid GTIN', function () {
-    if (! class_exists(PrintLabelsAction::class)) {
-        $this->markTestSkipped('needs filament-qr-code 1.3 print actions');
-    }
-
     $product = Product::factory()->create([
         'sku' => 'PRD-FALLBACK',
         'name' => 'Internal Part',

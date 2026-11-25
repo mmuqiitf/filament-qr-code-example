@@ -98,10 +98,6 @@ class ProductsTable
      */
     protected static function printActions(): array
     {
-        if (! class_exists(PrintLabelsAction::class)) {
-            return [];
-        }
-
         return [
             PrintLabelsAction::make()
                 ->sheet(LabelSheet::avery5160())
@@ -114,10 +110,6 @@ class ProductsTable
      */
     protected static function printBulkActions(): array
     {
-        if (! class_exists(PrintLabelsBulkAction::class)) {
-            return [];
-        }
-
         return [
             PrintLabelsBulkAction::make()
                 ->sheet(LabelSheet::avery5160())
