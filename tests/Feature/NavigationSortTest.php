@@ -2,6 +2,7 @@
 
 use App\Filament\Pages\BarcodeShowcase;
 use App\Filament\Pages\CashierCheckout;
+use App\Filament\Pages\DigitalLinkShowcase;
 use App\Filament\Pages\GoodsReceiving;
 use App\Filament\Pages\Gs1Labels;
 use App\Filament\Pages\Gs1Receiving;
@@ -32,6 +33,7 @@ it('gives every page in a group its own navigation sort', function () {
             QrLabels::getNavigationSort(),
             BarcodeShowcase::getNavigationSort(),
             Gs1Labels::getNavigationSort(),
-        ])->toBe([1, 2, 3])
+            DigitalLinkShowcase::getNavigationSort(),
+        ])->toBe([1, 2, 3, 4])
         ->and(ProductResource::getNavigationSort())->toBe(1);
 });

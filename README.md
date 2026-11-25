@@ -1,6 +1,6 @@
 # filament-qr-code example app
 
-A Filament v5 panel that shows [mmuqiitf/filament-qr-code](https://github.com/mmuqiitf/filament-qr-code) (`^1.2`) in realistic flows.
+A Filament v5 panel that shows [mmuqiitf/filament-qr-code](https://github.com/mmuqiitf/filament-qr-code) (`^1.3`) in realistic flows.
 
 ## Setup
 
@@ -23,9 +23,11 @@ composer dev          # serve on http://localhost:8000/admin
 | Manufacturing | `/admin/manufacturing` | Work-order station: every extension point (see below) |
 | Interactive QR Customizer | `/admin/qr-customizer` | Generating and styling QR codes |
 | QR Labels | `/admin/qr-labels` | Printable label sheets for the demo codes, built on the generator API |
-| Barcode Showcase | `/admin/barcode-showcase` | 1D barcodes (Code 128, EAN-13, EAN-8, UPC-A, Code 39, ITF-14, GS1-128) with `BarcodeDisplay`, product EAN-13 labels, inline errors for invalid values (needs filament-qr-code 1.1; GS1-128 needs 1.2) |
+| Barcode Showcase | `/admin/barcode-showcase` | 1D and 2D barcodes (Code 128, EAN-13, EAN-8, UPC-A, Code 39, ITF-14, GS1-128, Data Matrix, GS1 DataMatrix, PDF417, Compact PDF417) with `BarcodeDisplay`, product EAN-13 labels, inline errors for invalid values |
 | GS1 Receiving | `/admin/gs1-receiving` | `QrScanner::gs1()`: one GS1 label fills a received stock line (see below; needs filament-qr-code 1.2) |
 | GS1 Labels | `/admin/gs1-labels` | GS1-128 sample labels to scan into GS1 Receiving, valid and invalid (needs filament-qr-code 1.2) |
+| Digital Link | `/admin/digital-link` | Uncompressed GS1 Digital Link URI as a QR, the same AIs as GS1 DataMatrix, and `DigitalLink::parse()` back to a bracketed string (needs filament-qr-code 1.3) |
+| Products | `/admin/products` | `PrintLabelsAction` / `PrintLabelsBulkAction` on Avery 5160: a Digital Link QR plus GS1 DataMatrix when the product barcode is a valid GTIN, otherwise a SKU QR (needs filament-qr-code 1.3) |
 
 ### POS Checkout
 
@@ -69,7 +71,7 @@ Styling hooks on show: `extraAttributes(['class' => 'mfg-station'])` with `--fi-
 
 Try `OP-001`, `WO-5001`, `CMP-100:0001`, `CMP-200:0001`, `CMP-100:0002`, `DONE`. Print the labels from **QR Labels**.
 
-URLs are kebab-case and route names camelCase (`filament.admin.pages.posCheckout`, `filament.admin.pages.goodsReceiving`, `filament.admin.pages.gs1Receiving`, `filament.admin.pages.gs1Labels`, `filament.admin.pages.manufacturing`, `filament.admin.pages.qrLabels`).
+URLs are kebab-case and route names camelCase (`filament.admin.pages.posCheckout`, `filament.admin.pages.goodsReceiving`, `filament.admin.pages.gs1Receiving`, `filament.admin.pages.gs1Labels`, `filament.admin.pages.digitalLink`, `filament.admin.pages.manufacturing`, `filament.admin.pages.qrLabels`).
 
 Recipes in the package docs mirror these pages: [`docs/recipes`](https://github.com/mmuqiitf/filament-qr-code/tree/main/docs/recipes).
 

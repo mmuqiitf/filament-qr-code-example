@@ -4,12 +4,16 @@ use App\Filament\Resources\Products\Pages\CreateProduct;
 use App\Filament\Resources\Products\Pages\EditProduct;
 use App\Filament\Resources\Products\Pages\ListProducts;
 use App\Filament\Resources\Products\Pages\ViewProduct;
+use App\Filament\Resources\Products\Tables\ProductsTable;
 use App\Models\Product;
 use App\Models\User;
 use Filament\Actions\ActionGroup;
 use Livewire\Livewire;
 use Mmuqiitf\FilamentQrCode\Enums\QrFormat;
+use Mmuqiitf\FilamentQrCode\Gs1\DigitalLink;
+use Mmuqiitf\FilamentQrCode\Printing\LabelSheet;
 use Mmuqiitf\FilamentQrCode\Tables\Actions\DownloadQrBulkAction;
+use Mmuqiitf\FilamentQrCode\Tables\Actions\PrintLabelsAction;
 use Mmuqiitf\FilamentQrCode\Tables\Columns\BarcodeColumn;
 
 beforeEach(function () {
@@ -101,7 +105,7 @@ it('keeps the products table narrow enough for a 1280px screen', function () {
     expect($actions)->toHaveCount(1)
         ->and($actions[0])->toBeInstanceOf(ActionGroup::class)
         ->and(collect($actions[0]->getActions())->map(fn ($a) => $a->getName())->values()->all())
-        ->toBe(['download_qr', 'view', 'edit']);
+        ->toBe(['download_qr', 'print_labels', 'view', 'edit']);
 
     expect($table->getColumn('barcode'))->toBeInstanceOf(BarcodeColumn::class);
 });
@@ -131,4 +135,70 @@ it('falls back to Code 128 for a product barcode that is not a valid EAN-13', fu
 
     Livewire::test(ViewProduct::class, ['record' => $product->getKey()])
         ->assertSeeHtml('alt="Code 128 barcode: 8901234567891"');
+});
+
+it('builds a Digital Link QR and GS1 DataMatrix for a product print label', function () {
+    $product = Product::factory()->create([
+        'sku' => 'PRD-PRINT',
+        'name' => 'Printable Widget',
+        'barcode' => '8901234567012',
+    ]);
+
+    $label = PrintLabelsAction::make()
+        ->labelUsing(fn ($record) => ProductsTable::productLabel($record))
+        ->labelsForRecords(collect([$product]))[0];
+
+    $gtin = $product->gtin14();
+
+    expect($gtin)->toBe('08901234567012')
+        ->and($label->qrPayload())->toBe(DigitalLink::build(['01' => $gtin, '10' => 'PRD-PRINT']))
+        ->and($label->getHeading())->toBe('PRD-PRINT')
+        ->and($label->getCaption())->toBe('Printable Widget')
+        ->and($label->barcodeDataUri())->toStartWith('data:image/');
+});
+
+it('opens a printable Avery sheet for a product with a valid GTIN', function () {
+    $product = Product::factory()->create([
+        'sku' => 'PRD-SHEET',
+        'name' => 'Sheet Widget',
+        'barcode' => '8901234567012',
+    ]);
+
+    $url = PrintLabelsAction::make()
+        ->sheet(LabelSheet::avery5160())
+        ->labelUsing(fn ($record) => ProductsTable::productLabel($record))
+        ->storePrint(collect([$product]));
+
+    expect($url)->not->toBeNull();
+
+    $this->get($url)
+        ->assertOk()
+        ->assertSee('PRD-SHEET', escape: false)
+        ->assertSee('Sheet Widget', escape: false)
+        ->assertSee('filament-qr-label-sheet', escape: false)
+        ->assertSee('data:image/', escape: false);
+});
+
+it('pads a valid product EAN-13 to GTIN-14 and ignores invalid or non-numeric barcodes', function () {
+    expect(Product::factory()->make(['barcode' => '8901234567012'])->gtin14())->toBe('08901234567012')
+        ->and(Product::factory()->make(['barcode' => '8901234567891'])->gtin14())->toBeNull()
+        ->and(Product::factory()->make(['barcode' => 'INT-0042'])->gtin14())->toBeNull()
+        ->and(Product::factory()->make(['barcode' => null])->gtin14())->toBeNull();
+});
+
+it('falls back to a SKU QR when the product barcode is not a valid GTIN', function () {
+    $product = Product::factory()->create([
+        'sku' => 'PRD-FALLBACK',
+        'name' => 'Internal Part',
+        'barcode' => 'INT-0042',
+    ]);
+
+    $label = PrintLabelsAction::make()
+        ->labelUsing(fn ($record) => ProductsTable::productLabel($record))
+        ->labelsForRecords(collect([$product]))[0];
+
+    expect($label->qrPayload())->toBe('PRD-FALLBACK')
+        ->and($label->getHeading())->toBe('PRD-FALLBACK')
+        ->and($label->getCaption())->toBe('Internal Part')
+        ->and($label->barcodeDataUri())->toStartWith('data:image/');
 });

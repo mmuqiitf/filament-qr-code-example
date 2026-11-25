@@ -40,6 +40,7 @@ it('serves every package-backed admin page and its package assets', function (st
     '/admin/barcode-showcase',
     '/admin/gs1-receiving',
     '/admin/gs1-labels',
+    '/admin/digital-link',
     '/admin/products',
     '/admin/products/create',
 ]);
