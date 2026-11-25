@@ -1,5 +1,6 @@
 <?php
 
+use App\Filament\Pages\CycleCount;
 use App\Filament\Pages\DigitalLinkShowcase;
 use App\Filament\Pages\GoodsReceiving;
 use App\Filament\Pages\ManufacturingStation;
@@ -32,6 +33,7 @@ it('shows the intro on the page', function (string $page, string $title, string 
     'shelf audit' => [ShelfAudit::class, 'Count a shelf with the batch collector', 'Scan every product label on the shelf'],
     'work-order sequence' => [WorkOrderSequence::class, 'How Sequential Scanning Works', 'Untick corrections above to lock steps read-only.'],
     'digital link' => [DigitalLinkShowcase::class, 'GS1 Digital Link', 'Build, encode and parse a GS1 Digital Link.'],
+    'cycle count' => [CycleCount::class, 'Cycle count with quantities, CSV, and item cap', 'Rescan PRD-1001, PRD-1002, or PRD-1003'],
 ]);
 
 it('does not render the intro title as an out-of-order h4', function (string $page) {
@@ -39,5 +41,5 @@ it('does not render the intro title as an out-of-order h4', function (string $pa
 })->with([
     GoodsReceiving::class, PosCheckout::class, ManufacturingStation::class, QrLabels::class,
     ScannerShowcase::class, ServerSideChecks::class, ShelfAudit::class, WorkOrderSequence::class,
-    DigitalLinkShowcase::class,
+    DigitalLinkShowcase::class, CycleCount::class,
 ]);
