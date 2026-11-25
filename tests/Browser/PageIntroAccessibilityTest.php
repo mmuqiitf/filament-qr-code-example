@@ -24,6 +24,7 @@ it('shows the intro callout', function (string $path, string $intro) {
     'server-side checks' => ['/admin/server-side-checks', 'Try PRD-1001 (accepted), PRD-9999 (unknown SKU)'],
     'shelf audit' => ['/admin/shelf-audit', 'Scan every product label on the shelf'],
     'work-order sequence' => ['/admin/work-order-sequence', 'Untick corrections above to lock steps read-only.'],
+    'digital link' => ['/admin/digital-link', 'Build, encode and parse a GS1 Digital Link.'],
 ]);
 
 // Goods receiving, manufacturing, shelf audit and work-order sequence are left
@@ -40,4 +41,5 @@ it('has no accessibility issues', function (string $path) {
     'QR Labels' => '/admin/qr-labels',
     'scanner showcase' => '/admin/scanner-showcase',
     'server-side checks' => '/admin/server-side-checks',
+    'digital link' => '/admin/digital-link',
 ]);

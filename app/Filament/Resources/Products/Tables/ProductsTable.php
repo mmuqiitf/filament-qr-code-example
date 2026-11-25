@@ -12,8 +12,12 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Mmuqiitf\FilamentQrCode\Enums\BarcodeType;
 use Mmuqiitf\FilamentQrCode\Enums\QrFormat;
+use Mmuqiitf\FilamentQrCode\Printing\Label;
+use Mmuqiitf\FilamentQrCode\Printing\LabelSheet;
 use Mmuqiitf\FilamentQrCode\Tables\Actions\DownloadQrAction;
 use Mmuqiitf\FilamentQrCode\Tables\Actions\DownloadQrBulkAction;
+use Mmuqiitf\FilamentQrCode\Tables\Actions\PrintLabelsAction;
+use Mmuqiitf\FilamentQrCode\Tables\Actions\PrintLabelsBulkAction;
 use Mmuqiitf\FilamentQrCode\Tables\Columns\BarcodeColumn;
 use Mmuqiitf\FilamentQrCode\Tables\Columns\QrColumn;
 
@@ -71,6 +75,7 @@ class ProductsTable
                     DownloadQrAction::make()
                         ->qrData(fn ($record): string => (string) $record->sku)
                         ->qrFileName(fn ($record): string => "product-{$record->sku}"),
+                    ...self::printActions(),
                     ViewAction::make(),
                     EditAction::make(),
                 ]),
@@ -82,8 +87,63 @@ class ProductsTable
                         ->qrFileName(fn ($record): string => "product-{$record->sku}")
                         ->qrFormat(QrFormat::Png)
                         ->zipName('shelf-labels.zip'),
+                    ...self::printBulkActions(),
                     DeleteBulkAction::make(),
                 ]),
             ]);
+    }
+
+    /**
+     * @return list<PrintLabelsAction>
+     */
+    protected static function printActions(): array
+    {
+        if (! class_exists(PrintLabelsAction::class)) {
+            return [];
+        }
+
+        return [
+            PrintLabelsAction::make()
+                ->sheet(LabelSheet::avery5160())
+                ->labelUsing(self::productLabel(...)),
+        ];
+    }
+
+    /**
+     * @return list<PrintLabelsBulkAction>
+     */
+    protected static function printBulkActions(): array
+    {
+        if (! class_exists(PrintLabelsBulkAction::class)) {
+            return [];
+        }
+
+        return [
+            PrintLabelsBulkAction::make()
+                ->sheet(LabelSheet::avery5160())
+                ->labelUsing(self::productLabel(...)),
+        ];
+    }
+
+    public static function productLabel(mixed $record): Label
+    {
+        $label = Label::make()
+            ->heading((string) $record->sku)
+            ->caption((string) $record->name);
+
+        $gtin = $record->gtin14();
+
+        if ($gtin !== null) {
+            $label->digitalLink(['01' => $gtin, '10' => $record->sku])
+                ->barcode('(01)'.$gtin.'(10)'.$record->sku, BarcodeType::Gs1DataMatrix);
+        } else {
+            $label->qr((string) $record->sku);
+
+            if (filled($record->barcode)) {
+                $label->barcode((string) $record->barcode, ProductBarcodeType::for($record->barcode));
+            }
+        }
+
+        return $label;
     }
 }

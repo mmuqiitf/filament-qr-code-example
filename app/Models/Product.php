@@ -5,6 +5,7 @@ namespace App\Models;
 use Database\Factories\ProductFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Mmuqiitf\FilamentQrCode\Gs1\CheckDigit;
 
 class Product extends Model
 {
@@ -32,6 +33,23 @@ class Product extends Model
             'price' => 'decimal:2',
             'stock' => 'integer',
         ];
+    }
+
+    /**
+     * Pad an 8, 12, 13 or 14-digit product barcode to a 14-digit GTIN, or
+     * null when it is not all digits of those lengths or the check digit is wrong.
+     */
+    public function gtin14(): ?string
+    {
+        $barcode = $this->barcode;
+
+        if (! is_string($barcode) || preg_match('/^\d{8}$|^\d{12,14}$/', $barcode) !== 1) {
+            return null;
+        }
+
+        $gtin = str_pad($barcode, 14, '0', STR_PAD_LEFT);
+
+        return CheckDigit::validate($gtin) ? $gtin : null;
     }
 
     /**

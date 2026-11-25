@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "f3ecc8a320429327307dde4cb53deb1a",
+    "content-hash": "8885ec50dfee2135edb0ce66891c0528",
     "packages": [
         {
             "name": "anourvalar/eloquent-serialize",
@@ -3647,16 +3647,16 @@
         },
         {
             "name": "mmuqiitf/filament-qr-code",
-            "version": "v1.2.0",
+            "version": "dev-feat/1.3-label-printing",
             "source": {
                 "type": "git",
                 "url": "https://github.com/mmuqiitf/filament-qr-code.git",
-                "reference": "8ff45e40b53c529d9f9497c8c7a19e1d139b4798"
+                "reference": "08a8196ea8a489df31ba4ab96e9227f278d69d71"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/mmuqiitf/filament-qr-code/zipball/8ff45e40b53c529d9f9497c8c7a19e1d139b4798",
-                "reference": "8ff45e40b53c529d9f9497c8c7a19e1d139b4798",
+                "url": "https://api.github.com/repos/mmuqiitf/filament-qr-code/zipball/08a8196ea8a489df31ba4ab96e9227f278d69d71",
+                "reference": "08a8196ea8a489df31ba4ab96e9227f278d69d71",
                 "shasum": ""
             },
             "require": {
@@ -3683,6 +3683,9 @@
                 "phpstan/extension-installer": "^1.3",
                 "phpstan/phpstan": "^2.0",
                 "phpstan/phpstan-deprecation-rules": "^2.0"
+            },
+            "suggest": {
+                "dompdf/dompdf": "Render a label sheet to PDF from the same HTML the print stylesheet uses."
             },
             "type": "library",
             "extra": {
@@ -3724,9 +3727,9 @@
             ],
             "support": {
                 "issues": "https://github.com/mmuqiitf/filament-qr-code/issues",
-                "source": "https://github.com/mmuqiitf/filament-qr-code/tree/v1.2.0"
+                "source": "https://github.com/mmuqiitf/filament-qr-code/tree/feat/1.3-label-printing"
             },
-            "time": "2026-11-24T12:35:02+00:00"
+            "time": "2026-11-25T07:54:35+00:00"
         },
         {
             "name": "monolog/monolog",
@@ -14558,9 +14561,18 @@
             "time": "2026-11-15T13:41:13+00:00"
         }
     ],
-    "aliases": [],
+    "aliases": [
+        {
+            "package": "mmuqiitf/filament-qr-code",
+            "version": "dev-feat/1.3-label-printing",
+            "alias": "1.3.0",
+            "alias_normalized": "1.3.0.0"
+        }
+    ],
     "minimum-stability": "stable",
-    "stability-flags": {},
+    "stability-flags": {
+        "mmuqiitf/filament-qr-code": 20
+    },
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {

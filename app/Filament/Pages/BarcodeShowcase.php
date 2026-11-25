@@ -18,9 +18,10 @@ use Mmuqiitf\FilamentQrCode\Enums\BarcodeType;
 use Mmuqiitf\FilamentQrCode\Forms\Components\BarcodeDisplay;
 
 /**
- * The package's 1D barcode components: one sample per symbology, a try-it
- * field that shows the inline error for an invalid value, and the product
- * barcodes as EAN-13 labels (Code 128 for other values).
+ * The package's barcode components: one sample per symbology (including
+ * Data Matrix, GS1 DataMatrix and PDF417), a try-it field that shows the
+ * inline error for an invalid value, and the product barcodes as EAN-13
+ * labels (Code 128 for other values).
  *
  * @property Schema $form
  */
@@ -53,6 +54,10 @@ class BarcodeShowcase extends Page
         'code39' => 'LOT-A1',
         'itf14' => '15400141288763',
         'gs1-128' => '(01)08901234567074(10)L2611A',
+        'datamatrix' => 'PRD-1001',
+        'gs1-datamatrix' => '(01)08901234567074(10)L2611A',
+        'pdf417' => 'WO-9001|OP-001|PRD-1001',
+        'pdf417-compact' => 'WO-9001|OP-001|PRD-1001',
     ];
 
     /**
@@ -76,7 +81,7 @@ class BarcodeShowcase extends Page
             ->statePath('data')
             ->components([
                 Section::make('Symbologies')
-                    ->description('One valid sample per supported type. Download any of them as SVG or PNG.')
+                    ->description('One valid sample per supported type, including Data Matrix, GS1 DataMatrix and PDF417. Download any of them as SVG or PNG.')
                     ->schema([
                         Select::make('format')
                             ->label('Image format')

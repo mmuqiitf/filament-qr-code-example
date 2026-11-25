@@ -1,5 +1,6 @@
 <?php
 
+use App\Filament\Pages\DigitalLinkShowcase;
 use App\Filament\Pages\GoodsReceiving;
 use App\Filament\Pages\ManufacturingStation;
 use App\Filament\Pages\PosCheckout;
@@ -30,6 +31,7 @@ it('shows the intro on the page', function (string $page, string $title, string 
     'server-side checks' => [ServerSideChecks::class, 'Checked on the server', 'Try PRD-1001 (accepted), PRD-9999 (unknown SKU)'],
     'shelf audit' => [ShelfAudit::class, 'Count a shelf with the batch collector', 'Scan every product label on the shelf'],
     'work-order sequence' => [WorkOrderSequence::class, 'How Sequential Scanning Works', 'Untick corrections above to lock steps read-only.'],
+    'digital link' => [DigitalLinkShowcase::class, 'GS1 Digital Link', 'Build, encode and parse a GS1 Digital Link.'],
 ]);
 
 it('does not render the intro title as an out-of-order h4', function (string $page) {
@@ -37,4 +39,5 @@ it('does not render the intro title as an out-of-order h4', function (string $pa
 })->with([
     GoodsReceiving::class, PosCheckout::class, ManufacturingStation::class, QrLabels::class,
     ScannerShowcase::class, ServerSideChecks::class, ShelfAudit::class, WorkOrderSequence::class,
+    DigitalLinkShowcase::class,
 ]);
