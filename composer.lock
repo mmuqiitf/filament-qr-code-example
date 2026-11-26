@@ -3651,12 +3651,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/mmuqiitf/filament-qr-code.git",
-                "reference": "b89d43765b5554a956cbf7145a1a378429f3e72c"
+                "reference": "b4bb48f5e34ad0ac457405dcaf9847179678b37a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/mmuqiitf/filament-qr-code/zipball/b89d43765b5554a956cbf7145a1a378429f3e72c",
-                "reference": "b89d43765b5554a956cbf7145a1a378429f3e72c",
+                "url": "https://api.github.com/repos/mmuqiitf/filament-qr-code/zipball/b4bb48f5e34ad0ac457405dcaf9847179678b37a",
+                "reference": "b4bb48f5e34ad0ac457405dcaf9847179678b37a",
                 "shasum": ""
             },
             "require": {
