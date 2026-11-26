@@ -41,6 +41,7 @@ it('serves every package-backed admin page and its package assets', function (st
     '/admin/gs1-receiving',
     '/admin/gs1-labels',
     '/admin/digital-link',
+    '/admin/cycle-count',
     '/admin/products',
     '/admin/products/create',
 ]);

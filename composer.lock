@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "aae6cf3011166f8e0fda82761756d331",
+    "content-hash": "e900d1e6b69ca684fdab86b796aee7c2",
     "packages": [
         {
             "name": "anourvalar/eloquent-serialize",
@@ -3647,16 +3647,16 @@
         },
         {
             "name": "mmuqiitf/filament-qr-code",
-            "version": "v1.3.0",
+            "version": "v1.3.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/mmuqiitf/filament-qr-code.git",
-                "reference": "3adb3f9bacb0ba664c8f62ea603bd213e88e85e6"
+                "reference": "b8f657e5b6d03160b950022a04fdef1ae51abc31"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/mmuqiitf/filament-qr-code/zipball/3adb3f9bacb0ba664c8f62ea603bd213e88e85e6",
-                "reference": "3adb3f9bacb0ba664c8f62ea603bd213e88e85e6",
+                "url": "https://api.github.com/repos/mmuqiitf/filament-qr-code/zipball/b8f657e5b6d03160b950022a04fdef1ae51abc31",
+                "reference": "b8f657e5b6d03160b950022a04fdef1ae51abc31",
                 "shasum": ""
             },
             "require": {
@@ -3727,9 +3727,9 @@
             ],
             "support": {
                 "issues": "https://github.com/mmuqiitf/filament-qr-code/issues",
-                "source": "https://github.com/mmuqiitf/filament-qr-code/tree/v1.3.0"
+                "source": "https://github.com/mmuqiitf/filament-qr-code/tree/v1.3.1"
             },
-            "time": "2026-11-25T13:28:56+00:00"
+            "time": "2026-11-26T04:57:52+00:00"
         },
         {
             "name": "monolog/monolog",
