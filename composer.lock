@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "d4fdd87552ed5e5485f9bc272527be1b",
+    "content-hash": "e900d1e6b69ca684fdab86b796aee7c2",
     "packages": [
         {
             "name": "anourvalar/eloquent-serialize",
@@ -3647,16 +3647,16 @@
         },
         {
             "name": "mmuqiitf/filament-qr-code",
-            "version": "dev-main",
+            "version": "v1.3.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/mmuqiitf/filament-qr-code.git",
-                "reference": "6dd781cab02611d3e6e35789f12cd5e189622da8"
+                "reference": "b8f657e5b6d03160b950022a04fdef1ae51abc31"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/mmuqiitf/filament-qr-code/zipball/6dd781cab02611d3e6e35789f12cd5e189622da8",
-                "reference": "6dd781cab02611d3e6e35789f12cd5e189622da8",
+                "url": "https://api.github.com/repos/mmuqiitf/filament-qr-code/zipball/b8f657e5b6d03160b950022a04fdef1ae51abc31",
+                "reference": "b8f657e5b6d03160b950022a04fdef1ae51abc31",
                 "shasum": ""
             },
             "require": {
@@ -3687,7 +3687,6 @@
             "suggest": {
                 "dompdf/dompdf": "Render a label sheet to PDF from the same HTML the print stylesheet uses."
             },
-            "default-branch": true,
             "type": "library",
             "extra": {
                 "laravel": {
@@ -3701,33 +3700,7 @@
                     "Mmuqiitf\\FilamentQrCode\\": "src/"
                 }
             },
-            "autoload-dev": {
-                "psr-4": {
-                    "Mmuqiitf\\FilamentQrCode\\Tests\\": "tests/",
-                    "Workbench\\App\\": "workbench/app/"
-                }
-            },
-            "scripts": {
-                "test": [
-                    "vendor/bin/pest"
-                ],
-                "serve": [
-                    "@php vendor/bin/testbench workbench:build --ansi",
-                    "@php vendor/bin/testbench serve --ansi"
-                ],
-                "analyse": [
-                    "vendor/bin/phpstan analyse"
-                ],
-                "format": [
-                    "vendor/bin/pint"
-                ],
-                "test-style": [
-                    "vendor/bin/pint --test"
-                ],
-                "docs": [
-                    "@php bin/generate-api-docs.php"
-                ]
-            },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
@@ -3753,10 +3726,10 @@
                 "sequential-scan"
             ],
             "support": {
-                "source": "https://github.com/mmuqiitf/filament-qr-code/tree/main",
-                "issues": "https://github.com/mmuqiitf/filament-qr-code/issues"
+                "issues": "https://github.com/mmuqiitf/filament-qr-code/issues",
+                "source": "https://github.com/mmuqiitf/filament-qr-code/tree/v1.3.1"
             },
-            "time": "2026-11-26T04:33:10+00:00"
+            "time": "2026-11-26T04:57:52+00:00"
         },
         {
             "name": "monolog/monolog",
@@ -14588,18 +14561,9 @@
             "time": "2026-11-15T13:41:13+00:00"
         }
     ],
-    "aliases": [
-        {
-            "package": "mmuqiitf/filament-qr-code",
-            "version": "dev-main",
-            "alias": "1.3.1",
-            "alias_normalized": "1.3.1.0"
-        }
-    ],
+    "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": {
-        "mmuqiitf/filament-qr-code": 20
-    },
+    "stability-flags": {},
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
