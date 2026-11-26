@@ -11,6 +11,7 @@ use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Livewire\Attributes\On;
 use Mmuqiitf\FilamentQrCode\Enums\BarcodeFormat;
+use Mmuqiitf\FilamentQrCode\Enums\ScannerPreset;
 use Mmuqiitf\FilamentQrCode\Forms\Components\QrScanner;
 
 /**
@@ -143,6 +144,16 @@ class ScannerShowcase extends Page
                                 'Reserved prefix — scan rejected.',
                             )
                             ->placeholder('Try BAD-001...'),
+                    ]),
+
+                Section::make('8. Warehouse preset and wide scan region')
+                    ->description('Bundles Warehouse symbologies (Code 128, Code 39, ITF, QR, Data Matrix), 20 fps, rear camera, and camera controls, then widens the decode box and reticle via scanRegion(0.88, 0.35).')
+                    ->schema([
+                        QrScanner::make('warehouse_preset')
+                            ->label('Warehouse parcel / pallet')
+                            ->preset(ScannerPreset::Warehouse)
+                            ->scanRegion(0.88, 0.35)
+                            ->placeholder('Scan a shipping label...'),
                     ]),
             ]);
     }

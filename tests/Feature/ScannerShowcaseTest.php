@@ -13,7 +13,8 @@ it('can render scanner showcase page', function () {
         ->assertSuccessful()
         ->assertSee('Scanner Showcase')
         ->assertSee('QR codes only')
-        ->assertSee('Focus handoff pair');
+        ->assertSee('Focus handoff pair')
+        ->assertSee('Warehouse preset and wide scan region');
 });
 
 it('binds every showcase scenario to form state', function () {
@@ -27,12 +28,14 @@ it('binds every showcase scenario to form state', function () {
             'handoff_a' => 'FIRST',
             'handoff_b' => 'SECOND',
             'guarded_sku' => 'GOOD-1',
+            'warehouse_preset' => 'WH-900',
         ])
         ->assertHasNoFormErrors()
         ->assertSet('data.basic_sku', 'SKU-1')
         ->assertSet('data.retail_barcode', '8901234567890')
         ->assertSet('data.handoff_b', 'SECOND')
-        ->assertSet('data.guarded_sku', 'GOOD-1');
+        ->assertSet('data.guarded_sku', 'GOOD-1')
+        ->assertSet('data.warehouse_preset', 'WH-900');
 });
 
 it('normalizes retail barcodes live and rejects guarded scans instantly', function () {
@@ -59,4 +62,11 @@ it('syncs typed guarded SKUs on blur so rejectWhen also covers manual entry', fu
 it('syncs typed retail barcodes on blur so normalizeUsing also covers manual entry', function () {
     Livewire::test(ScannerShowcase::class)
         ->assertSeeHtml('wire:model.live.blur="data.retail_barcode"');
+});
+
+it('exposes Warehouse preset formats and wide scanRegion on warehouse_preset', function () {
+    Livewire::test(ScannerShowcase::class)
+        ->assertSeeHtml('warehouse_preset')
+        ->assertSeeHtml('&quot;scanRegion&quot;:{&quot;width&quot;:0.88,&quot;height&quot;:0.35}')
+        ->assertSeeHtml('CODE_128');
 });
