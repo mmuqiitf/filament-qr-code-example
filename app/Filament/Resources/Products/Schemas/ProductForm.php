@@ -6,6 +6,8 @@ use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Schema;
 use Mmuqiitf\FilamentQrCode\Enums\BarcodeFormat;
+use Mmuqiitf\FilamentQrCode\Enums\BarcodeType;
+use Mmuqiitf\FilamentQrCode\Forms\Components\BarcodeDisplay;
 use Mmuqiitf\FilamentQrCode\Forms\Components\QrCodeDisplay;
 use Mmuqiitf\FilamentQrCode\Forms\Components\QrScanner;
 
@@ -80,6 +82,12 @@ class ProductForm
                     ->color('#0f172a')
                     ->caption('Official Product SKU Verification QR')
                     ->downloadable(true)
+                    ->columnSpanFull(),
+
+                BarcodeDisplay::make('product_barcode')
+                    ->label('Generated Product Barcode')
+                    ->type(BarcodeType::Code128)
+                    ->data(fn ($record, $get): ?string => filled($get('sku')) ? (string) $get('sku') : ($record?->sku ? (string) $record->sku : null))
                     ->columnSpanFull(),
             ]);
     }
